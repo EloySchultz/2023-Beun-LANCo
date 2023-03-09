@@ -1,0 +1,1 @@
+#define USING_ESP8266
