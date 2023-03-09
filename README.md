@@ -1,5 +1,5 @@
 # 2023-Beun-Lanco
-The best LAN party in the world would not be complete without some fire hazards. In the past 5 editions of the TESLAN, LANCo members have crafted and accumulated many items, expertly referred to as beundingen (beunthings), which light up and add to the ambience of the LAN. 
+The best LAN party in the world would not be complete without some fire hazards. In the past 5 editions of the TESLAN, LANCo members have crafted and accumulated many items, expertly referred to as "beundingen" (beunthings), which light up and add to the ambience of the LAN. 
 
 In 2023, beun consists of three beunding categories and software:
 
