@@ -3,8 +3,17 @@
 #include <FastLED.h>
 /*#include "network_hardware.h"*/
 
+// CONFIG //
+#define USING_WIZNET 1; //All Seinpalen use Wiznet, so this should be defined.
+#define SEINPAAL_4 1;  //Put here which seinpaal you are uploading to.
+#include "devices.h"
+//END OF CONFIG//
 
 #define USING_WIZNET 1;
+// CONSTANTS FOR ALL DEVICES //
+#define LED_PACKET_BUFFER 320
+unsigned int localPort = 8888;
+byte gateway[] = { 192, 168, 2, 254} ;
 
 #if defined(USING_WIZNET)
   #include <Ethernet.h>
