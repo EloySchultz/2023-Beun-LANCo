@@ -207,24 +207,30 @@ font = {
     'L': [[1,1,1,1,1],[0,0,0,0,1],[0,0,0,0,1]],
     'A': [[1,1,1,1,1],[1,0,1,0,0],[1,1,1,1,1]],
     'N': [[1,1,1,1,1],[0,1,1,0,0],[0,0,1,1,0],[1,1,1,1,1]],
-    ' ': [[0,0,0,0,0],[0,0,0,0,0]],    
-    'W': [[1,1,1,1,0],[0,0,0,0,1],[0,0,1,1,1],[0,0,0,0,1],[1,1,1,1,0]],
-    'C': [[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1]],
+    ' ': [[0,0,0,0,0]],    
+    'W': [[1,1,1,1,0],[0,0,0,0,1],[0,0,0,1,1],[0,0,0,0,1],[1,1,1,1,0]],
+    'C': [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1]],
     'O': [[1,1,1,1,1],[1,0,0,0,1],[1,1,1,1,1]],
-    'M': [[0,1,1,1,1],[1,0,0,0,0],[1,1,1,0,0],[1,0,0,0,0],[1,1,1,1,0]],
-    'H': [[1,1,1,1,1],[0,0,1,0,0],[1,1,1,1,1]]}
-def show_text(beunding, N, string="WELCOME TO THE TESLAN", dt = 0.02, duration = 30, colour = (1,1,1)):
+    'M': [[0,1,1,1,1],[1,0,0,0,0],[0,1,1,0,0],[1,0,0,0,0],[1,1,1,1,0]],
+    'H': [[1,1,1,1,1],[0,0,1,0,0],[1,1,1,1,1]],
+    '!': [[1,1,1,0,1]],
+    'F': [[1,1,1,1,1],[1,0,1,0,0],[1,0,1,0,0]],
+    'Y': [[1,1,1,0,1],[0,0,1,0,1],[1,1,1,1,0]],
+    'I': [[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1]],
+    'K': [[1,1,1,1,1],[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1]],
+    'V': [[1,1,1,1,0],[0,0,0,0,1],[1,1,1,1,0]],
+    'U': [[1,1,1,1,1],[0,0,0,0,1],[1,1,1,1,1]]}
+def show_text(beunding, N, string="WELCOME TO THE TESLAN!", dt = 0.02, duration = 30, colour = (1,1,1)):
     #duration = how many times to repeat
     repeated=0
     Nsteps = 1000000#int(duration//dt)
     offset=0
     colors=[(0,0,0),colour]
     min_index=10000000
-    #string="WELCOME TO THE TESLAN";
     ls=0;
     for character in string: #find string length in LEDS
         ls += len(font[character]) + 1
-    initial_offset = ls*14+20
+    initial_offset = ls*14
     
     for _ in range(Nsteps):
         offset+=1;
@@ -236,12 +242,12 @@ def show_text(beunding, N, string="WELCOME TO THE TESLAN", dt = 0.02, duration =
             l=len(font[character])
             for i in range(l): # breedte
                 for j in range(5): #hoogte
-                    max_index = max(max_index,N-(j+i)*13-(i)-(offset+(z))*14+initial_offset*2+14*5)
+                    #print(max_index)
+                    max_index = max(max_index,N-(j+i)*13-(i)-(offset+(z))*14+initial_offset*2+14*10+7)
                     written=try_set_written(written,N,N-(j+i)*13-(i)-(offset+(z))*14+initial_offset, font[character][l-1-i][4-j])
-                    written=try_set_written(written,N,N-(j+i)*13-(i)-(offset+(z))*14+initial_offset*2+14*10, font[character][l-1-i][4-j])
+                    written=try_set_written(written,N,N-(j+i)*13-(i)-(offset+(z))*14+initial_offset*2+14*10+7, font[character][l-1-i][4-j])
                     #beunding.setLed()
             z+=l+1;
-        print(max_index);
         if max_index==0:
             offset=0;
             repeated+=1;
