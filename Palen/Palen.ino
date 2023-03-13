@@ -14,6 +14,7 @@
 #define LED_PACKET_BUFFER 320
 unsigned int localPort = 8888;
 byte gateway[] = { 192, 168, 2, 254} ;
+boolean receivedPacket=false;
 
 #if defined(USING_WIZNET)
   #include <Ethernet.h>
@@ -53,6 +54,11 @@ CRGB leds[NUM_LEDS];
 /*   Functions   */
 
 void setup() {
+FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+for (int i = 0; i<NUM_LEDS; i++){
+  leds[i] = CRGB::Black;
+  }
+delay(100);
 #if defined(USING_WIZNET) || defined(USING_ENC)
   Ethernet.begin(mac, ip, gateway);
 /*#elif defined(USING_ESP8266)
@@ -65,6 +71,18 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
 }
 
+void showStatus() //RED = No connection, GREEN = Yes connection, BLUE = HARDWARE ERROR
+  {
+  for (int i = 0; i<14; i++){ 
+    leds[i].r = 15 * (((Ethernet.linkStatus()==Unknown) || (Ethernet.linkStatus()==LinkOFF)) && (!(Ethernet.hardwareStatus() == EthernetNoHardware)));
+    leds[i].g = 15* ((Ethernet.linkStatus()==LinkON));
+    leds[i].b = 15* (Ethernet.hardwareStatus() == EthernetNoHardware);
+    //Serial.println(leds[i]);
+  }
+  FastLED.show();
+  
+  delay(100);
+  }
 void parsePacket2(int num){
   unsigned int iled;
   for (int i = 0; i<num; i++){
@@ -77,10 +95,15 @@ void parsePacket2(int num){
 
 void loop() {
   int packetSize = Udp.parsePacket();
+  if (!receivedPacket)
+    {
+    showStatus();
+    }
   //Serial.println("Hi");
   if(packetSize) {
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE); //read to buffer
     parsePacket2(packetSize/3);
+    receivedPacket=true;
     FastLED.show();
   }
 }
