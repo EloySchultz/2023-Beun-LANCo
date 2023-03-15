@@ -13,7 +13,7 @@ The seinpalen are large PVC pipes with an addressable LED-string at the top. Typ
 
 The seinpalen are constructed of two pieces of 70 mm PVC pipe, coupled by a 70-70mm PVC extender (coupler piece). The top piece is about 40 cm in length, while the bottom piece is 2 meters long. Around the top piece, 5 meters of 60 leds/m WS2812b leds are wrapped (300 leds total). Index 0 is LED closes to the ceiling and index 299 is the LED that is closes to the ground. Each LEDstrip has a JST-SM 3 pin female connector which powers the LEDstrip from the top. There is also a speaker wire attached at the bottom of the LEDstrip which powers the LEDstrip from the bottom. Please wire the seinpaal as follows:
 
-![image](https://user-images.githubusercontent.com/99472685/225275508-07a30805-d670-4919-a9d5-dfc8cca0ddd3.png)
+![image](https://user-images.githubusercontent.com/99472685/225276003-b4794dbb-e56b-4b33-8f05-12d6cc40c0ba.png)
 
 The Seinpalen are controlled by either an Arduino Nano (Seinpaal 1-4) or Arduino pro mini (5V 16Mhz) (Seinpaal 5-8).  The microcontroller is mounted on a custom PCB. The custom PCB has pads that can be soldered to "select" either Nano or Pro mini pinouts. The microcontroller is interconnected to a WizNet W5500 LAN module via SPI. The PCB also acts as a passthrough for all the LED wiring as shown above. For all microcontroller programming, remove the microcontroller from the custom PCB as otherwise the LED-strip will try to power from your USB port. Another tip: for the Arduino pro mini's, use a proper FTDI programmer because if somehow the ground gets disconnected during programming, a short will be created through the data pins and that may fry your pro-mini.
 
