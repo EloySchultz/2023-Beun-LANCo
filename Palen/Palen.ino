@@ -3,9 +3,9 @@
 #include <FastLED.h>
 
 // CONFIG //
-#define USING_WIZNET 1; //All Seinpalen use Wiznet, so this should be defined.
-#define SEINPAAL_4 1;  //Put here which seinpaal you are uploading to.
+#define LEDBEAM_6 1;  //Put here which seinpaal you are uploading to.
 #include "devices.h"
+
 //END OF CONFIG//
 
 
@@ -14,22 +14,55 @@
 #define LED_PACKET_BUFFER 320
 unsigned int localPort = 8888;
 byte gateway[] = { 192, 168, 2, 254} ;
+byte subnet[] = { 255, 255, 255, 0} ;
 boolean receivedPacket=false;
 
 #if defined(USING_WIZNET)
   #include <Ethernet.h>
   #include <EthernetUdp.h>
+#elif defined(USING_ESP8266)
+  #include "wifi_credentials.h"
+  #include <ESP8266WiFi.h>
+  #include <WiFiUdp.h>
 #endif
 
-
-
-#if defined(USING_WIZNET)
-  EthernetUDP Udp;
-  #define UDP_TX_PACKET_MAX_SIZE LED_PACKET_BUFFER //24 bytes by default on Atmega. Very large on ESP
-#endif
 
 char packetBuffer[LED_PACKET_BUFFER];
 CRGB leds[NUM_LEDS];
+
+#if defined(USING_WIZNET)
+  EthernetUDP Udp;
+  void showStatus() //RED = No connection, GREEN = Yes connection, BLUE = HARDWARE ERROR
+    {
+    for (int i = 0; i<14; i++){ 
+      leds[i].r = 15 * (((Ethernet.linkStatus()==Unknown) || (Ethernet.linkStatus()==LinkOFF)) && (!(Ethernet.hardwareStatus() == EthernetNoHardware)));
+      leds[i].g = 15* ((Ethernet.linkStatus()==LinkON));
+      leds[i].b = 15* (Ethernet.hardwareStatus() == EthernetNoHardware);
+      //Serial.println(leds[i]);
+    }
+    FastLED.show();
+    
+    delay(100);
+    }
+  #define UDP_TX_PACKET_MAX_SIZE LED_PACKET_BUFFER //24 bytes by default on Atmega. Very large on ESP
+#elif defined(USING_ESP8266)
+  WiFiUDP Udp;
+  void showStatus() //RED = No connection, GREEN = Yes connection, BLUE = HARDWARE ERROR
+    {
+    for (int i = 0; i<14; i++){ 
+      leds[i].r = 15 * (WiFi.status() != WL_CONNECTED);
+      leds[i].g = 15* (WiFi.status() == WL_CONNECTED);
+      leds[i].b = 15* (WiFi.status()== WL_NO_SSID_AVAIL);
+      //Serial.println(leds[i]);
+    }
+    FastLED.show();
+    delay(100);
+    }
+#endif
+
+
+
+
 
 /*   Functions   */
 
@@ -39,27 +72,25 @@ FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
 for (int i = 0; i<NUM_LEDS; i++){
   leds[i] = CRGB::Black;
   }
-delay(100);
+  delay(100);
+  
 #if defined(USING_WIZNET) || defined(USING_ENC)
   Ethernet.begin(mac, ip, gateway);
+#elif defined(USING_ESP8266)
+  wifi_set_macaddr(0, const_cast<uint8*>(mac));
+  WiFi.config(ip, gateway, subnet);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  while (WiFi.status() != WL_CONNECTED){
+    showStatus();
+    delay(100);
+    }
 #endif
   
   Udp.begin(localPort);  
 }
 
 
-void showStatus() //RED = No connection, GREEN = Yes connection, BLUE = HARDWARE ERROR
-  {
-  for (int i = 0; i<14; i++){ 
-    leds[i].r = 15 * (((Ethernet.linkStatus()==Unknown) || (Ethernet.linkStatus()==LinkOFF)) && (!(Ethernet.hardwareStatus() == EthernetNoHardware)));
-    leds[i].g = 15* ((Ethernet.linkStatus()==LinkON));
-    leds[i].b = 15* (Ethernet.hardwareStatus() == EthernetNoHardware);
-    //Serial.println(leds[i]);
-  }
-  FastLED.show();
-  
-  delay(100);
-  }
+
 void parsePacket2(int num){
   unsigned int iled;
   for (int i = 0; i<num; i++){
