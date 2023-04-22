@@ -34,6 +34,8 @@ PSu?
 
 Laser go BRRRT.
 
+Yes so new in the 6th edition of the TesLAN is laser graphics logo! The idea is that, instead of building a phyisical logo out of PVC pipe and el-wire to put on the wall, we instead use a laser to project graphics and animations on the wall. I worked on a script to convert .SVG files to .ild (ILDA) files. I even made it so that a color table is automatically generated per ILDA file! (I hope this is how it is supposed to be).
+
 
 # 4. SyncStream
 https://github.com/MaxWinsemius/SyncStream/ 
