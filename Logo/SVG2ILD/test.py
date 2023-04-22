@@ -702,6 +702,7 @@ class SVGReader(xml.sax.handler.ContentHandler):
 		self.style_stack = []
 		self.defsdepth = 0
 	def endDocument(self):
+		self.frame.transform(self.ts)
 		self.frame.transform(self.tc)
 	def startElement(self, name, attrs):
 		if name == "svg":
@@ -805,7 +806,7 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			self.defsdepth += 1
 	def endElement(self, name):
 		if name == 'g':
-			self.popmatrix()
+			#self.popmatrix() REmoving this is a super temporary fix to get Adobe transforms working lol
 			self.style_stack.pop()
 		elif name in ('defs','clipPath'):
 			self.defsdepth -= 1
@@ -833,6 +834,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 		y = y / vh
 		return (x,y)
 	def ts(self,coord):
+		print("aaaa")
+		print(self.matrix_stack)
 		a,b,c,d,e,f = self.matrix_stack[-1]
 		x,y = coord
 		nx = a*x + c*y + e
@@ -1084,6 +1087,8 @@ if __name__ == "__main__":
 
 	if optimize:
 		frame.sort()
+
+
 
 	if verbose:
 		print("Render")
