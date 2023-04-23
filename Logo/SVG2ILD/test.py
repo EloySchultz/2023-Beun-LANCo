@@ -62,7 +62,7 @@ def create_color_table(file):
 	for i in selectors:
 		if 'stroke' in selectors[i].keys():
 			c = selectors[i]['stroke']
-			hex2col(c)
+			c= hex2col(c)
 			color[i] = c
 	stroke_ind = [m.start() for m in re.finditer('stroke=', str(soup))]
 	stroke_ind += [m.start() for m in re.finditer('stroke =', str(soup))]
@@ -957,7 +957,7 @@ def load_svg(path):
 	return handler.frame
 
 def write_ild(params, rframe, path, center=True):
-
+	global color_dict
 	#First write color frame
 	colors= list(color_dict.values())
 	clrs = []
@@ -1050,7 +1050,7 @@ def write_ild(params, rframe, path, center=True):
 		frames = int(params.time / frame_time)
 
 	for i in range(frames):
-		hdr = struct.pack(">4s3xB8s8sHHHBx", b"ILDA", 1, b"svg2ilda", b"", samples, i, frames, 0)
+		hdr = struct.pack(">4s3xB8s8sHHHBx", b"ILDA", 1, b"svg2ilda", b"", samples, 0, frames, 0)
 		fout.write(hdr)
 		fout.write(dout)
 	hdr = struct.pack(">4s3xB8s8sHHHBx", b"ILDA", 0, b"svg2ilda", b"", 0, 0, frames, 0)

@@ -62,7 +62,7 @@ def create_color_table(file):
 	for i in selectors:
 		if 'stroke' in selectors[i].keys():
 			c = selectors[i]['stroke']
-			hex2col(c)
+			c=hex2col(c)
 			color[i] = c
 	stroke_ind = [m.start() for m in re.finditer('stroke=', str(soup))]
 	stroke_ind += [m.start() for m in re.finditer('stroke =', str(soup))]
