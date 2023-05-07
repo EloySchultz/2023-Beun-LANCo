@@ -10,11 +10,11 @@
 
 
 
-// CONSTANTS FOR ALL DEVICES //
-#define LED_PACKET_BUFFER 320
-unsigned int localPort = 8888;
-byte gateway[] = { 192, 168, 2, 254} ;
-byte subnet[] = { 255, 255, 255, 0} ;
+
+
+
+
+//Used for status ring
 boolean receivedPacket=false;
 
 #if defined(USING_WIZNET)

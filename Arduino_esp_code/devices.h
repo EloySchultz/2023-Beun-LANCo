@@ -1,4 +1,11 @@
-//SEINPAAL SPECIFIC CONSTANTS
+// CONSTANTS FOR ALL DEVICES //
+#define LED_PACKET_BUFFER 320
+unsigned int localPort = 8888;
+byte gateway[] = { 192, 168, 2, 254} ;
+byte subnet[] = { 255, 255, 255, 0} ;
+
+
+//DEVICE SPECIFIC CONSTANTS
 #if defined(SEINPAAL_1)
   #define USING_WIZNET 1;
 	byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x07};
