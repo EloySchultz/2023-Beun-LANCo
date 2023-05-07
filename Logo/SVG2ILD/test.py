@@ -5,6 +5,8 @@ import os, sys, math
 import struct
 import xml.sax, xml.sax.handler
 import re
+
+import numpy as np
 from bs4 import BeautifulSoup as BSoup
 import lxml
 import cssutils
@@ -63,6 +65,7 @@ def create_color_table(file):
 		if 'stroke' in selectors[i].keys():
 			c = selectors[i]['stroke']
 			c= hex2col(c)
+			i = ''.join(i.split(".")[1:])
 			color[i] = c
 	stroke_ind = [m.start() for m in re.finditer('stroke=', str(soup))]
 	stroke_ind += [m.start() for m in re.finditer('stroke =', str(soup))]
@@ -379,6 +382,18 @@ class LaserPath(object):
 		for i in self.segments:
 			i.showinfo(tr+' ')
 
+class ClassFrame(object):
+	def __init__(self,classs=None):
+		self.objects=[]
+		self.classs=classs
+	def add(self, obj):
+		self.objects.append(obj)
+	def transform(self, func):
+		for i in self.objects:
+			i.transform(func)
+
+
+
 class LaserFrame(object):
 	def __init__(self):
 		self.objects = []
@@ -448,7 +463,7 @@ class LaserSample(object):
 		return "LaserSample((%d,%d),%r,%d)"%(self.coord[0],self.coord[1],self.on,self.color)
 
 class SVGPath(object):
-	def __init__(self, data=None,color=334):
+	def __init__(self, data=None,color=334, classs=None):
 		self.subpaths = []
 		self.color=color
 		if data:
@@ -694,15 +709,48 @@ class SVGPolyline(SVGPath):
 		self.subpaths.append(subpath)
 
 class SVGReader(xml.sax.handler.ContentHandler):
+	def process_attributes(self,attrs):
+		global color_dict
+		#print(color_dict)
+		#check_class_frame(classs)
+		color = 0;
+		stroke = "#A0A000"
+		if 'class' in attrs.keys():
+			classs=attrs['class']
+			#color = class_to_color('.'+attrs['class'])
+		elif 'id' in attrs.keys():
+			classs = attrs['id']
+		elif 'stroke' in attrs.keys():
+			classs = attrs['stroke']
+		elif 'xlink:href' in attrs.keys():
+			classs = attrs['xlink:href'].replace("#","")
+		if 'stroke' in attrs.keys():
+			stroke = hex2col(attrs['stroke'])
+
+		for i in range(self.id_index+1):
+			self.id_stack[i].append(classs)
+		#if self.id_index>1:
+		#	print("aaaa")
+		frame=self.check_class_frame(classs)
+		if not (classs in color_dict):
+			color_dict[classs] = stroke
+			color=list(color_dict.keys()).index(classs)
+		else:
+			color = list(color_dict.keys()).index(classs)#color_dict[classs] #oorrr... should this be the other way around?
+		return color,frame;
+			#color = class_to_color('.' + attrs['class'])
+
 	def doctype(self, name, pubid, system):
 		print(name,pubid,system)
 	def startDocument(self):
 		self.frame = LaserFrame()
 		self.matrix_stack = [(1,0,0,1,0,0)]
+		self.id_stack = [[]] #list of lsits
 		self.style_stack = []
+		self.id_index=0;
 		self.defsdepth = 0
+		self.classframes=[]
 	def endDocument(self):
-		self.frame.transform(self.ts)
 		self.frame.transform(self.tc)
 	def startElement(self, name, attrs):
 		if name == "svg":
@@ -722,11 +770,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 				self.transform(attrs['transform'])
 			if self.isvisible(attrs):
 				color = -20
-				if 'class' in attrs.keys():
-					color = class_to_color('.'+attrs['class'])
-				elif 'stroke' in attrs.keys():
-					color = class_to_color(attrs['stroke'])
-				self.addPath(attrs['d'],color)
+				color,frame = self.process_attributes(attrs)
+				self.addPath(attrs['d'],color,frame=frame)
 			if 'transform' in attrs.keys():
 				self.popmatrix()
 		elif name in ("polyline","polygon"):
@@ -734,11 +779,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 				self.transform(attrs['transform'])
 			if self.defsdepth == 0 and self.isvisible(attrs):
 				color = -20
-				if 'class' in attrs.keys():
-					color = class_to_color('.'+attrs['class'])
-				elif 'stroke' in attrs.keys():
-					color = class_to_color(attrs['stroke'])
-				self.addPolyline(attrs['points'],color, name == "polygon")
+				color,frame = self.process_attributes(attrs)
+				self.addPolyline(attrs['points'],color,frame=frame)
 			if 'transform' in attrs.keys():
 				self.popmatrix()
 		elif name == "line":
@@ -747,11 +789,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			if self.defsdepth == 0 and self.isvisible(attrs):
 				x1, y1, x2, y2 = [float(attrs[x]) for x in ('x1','y1','x2','y2')]
 				color=-20
-				if 'class' in attrs.keys():
-					color = class_to_color('.'+attrs['class'])
-				elif 'stroke' in attrs.keys():
-					color = class_to_color(attrs['stroke'])
-				self.addLine(x1, y1, x2, y2,color=color)
+				color,frame = self.process_attributes(attrs)
+				self.addLine(x1, y1, x2, y2,color=color,frame=frame)
 			if 'transform' in attrs.keys():
 				self.popmatrix()
 		elif name == "rect":
@@ -760,11 +799,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			if self.defsdepth == 0 and self.isvisible(attrs):
 				x1, y1, w, h = [float(attrs[x]) for x in ('x','y','width','height')]
 				color = -20
-				if 'class' in attrs.keys():
-					color = class_to_color('.'+attrs['class'])
-				elif 'stroke' in attrs.keys():
-					color = class_to_color(attrs['stroke'])
-				self.addRect(x1, y1, x1+w, y1+h,color=color)
+				color,frame = self.process_attributes(attrs)
+				self.addRect(x1, y1, x1+w, y1+h,color=color,frame=frame)
 			if 'transform' in attrs.keys():
 				self.popmatrix()
 		elif name == "circle":
@@ -773,11 +809,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			if self.defsdepth == 0 and self.isvisible(attrs):
 				cx, cy, r = [float(attrs[x]) for x in ('cx','cy','r')]
 				color = -20
-				if 'class' in attrs.keys():
-					color = class_to_color('.'+attrs['class'])
-				elif 'stroke' in attrs.keys():
-					color = class_to_color(attrs['stroke'])
-				self.addCircle(cx, cy, r,color=color)
+				color,frame = self.process_attributes(attrs)
+				self.addCircle(cx, cy, r,color=color,frame=frame)
 			if 'transform' in attrs.keys():
 				self.popmatrix()
 		elif name == "ellipse":
@@ -786,13 +819,12 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			if self.defsdepth == 0 and self.isvisible(attrs):
 				cx, cy, rx, ry = [float(attrs[x]) for x in ('cx','cy','rx','ry')]
 				color = -20
-				if 'class' in attrs.keys():
-					color = class_to_color('.'+attrs['class'])
-				elif 'stroke' in attrs.keys():
-					color = class_to_color(attrs['stroke'])
-				self.addEllipse(cx, cy, rx, ry,color=color)
+				color,frame = self.process_attributes(attrs)
+				self.addEllipse(cx, cy, rx, ry,color=color,frame=frame)
 			if 'transform' in attrs.keys():
 				self.popmatrix()
+		elif name == "use":
+			self.process_attributes(attrs)
 		elif name == 'g':
 			if 'transform' in attrs.keys():
 				self.transform(attrs['transform'])
@@ -806,10 +838,25 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			self.defsdepth += 1
 	def endElement(self, name):
 		if name == 'g':
-			#self.popmatrix() REmoving this is a super temporary fix to get Adobe transforms working lol
+			print(len(self.matrix_stack))
+			print(self.matrix_stack)
+			#Apply transform to all recorded items;
+			for j in self.id_stack[self.id_index]:
+				for i in self.classframes:
+					if i.classs==j:
+						i.transform(self.ts) #apply TC transform
+						print("Applying transform:" + str(i.classs))
+
+			self.popmatrix() #REmoving this is a super temporary fix to get Adobe transforms working lol
 			self.style_stack.pop()
+
 		elif name in ('defs','clipPath'):
 			self.defsdepth -= 1
+		if name =='svg':
+			#print("Hey Ho")
+			for i in self.classframes:
+				for j in i.objects:
+					self.frame.add(j)
 	def mmul(self, m1, m2):
 		a1,b1,c1,d1,e1,f1 = m1
 		a2,b2,c2,d2,e2,f2 = m2
@@ -820,10 +867,23 @@ class SVGReader(xml.sax.handler.ContentHandler):
 		e3 = a1 * e2 + c1 * f2 + e1
 		f3 = b1 * e2 + d1 * f2 + f1
 		return (a3,b3,c3,d3,e3,f3)
+	def check_class_frame(self,classs):
+		#ClassFrame
+		for i in self.classframes: #Search for class in classframes
+			if i.classs==classs:
+				return i; #We found it, so return it
+		a=ClassFrame(classs) #otherwise, create one, add it to the classframes array, and return it.
+		self.classframes.append(a)
+		return a
 	def pushmatrix(self, m):
-		new_mat = self.mmul(self.matrix_stack[-1], m)
+		print("Pushmatrix")
+		self.id_index+=1
+		self.id_stack.append([])
+		new_mat = m# self.mmul(self.matrix_stack[-1], m)
 		self.matrix_stack.append(new_mat)
 	def popmatrix(self):
+		self.id_stack.pop()
+		self.id_index-=1;
 		self.matrix_stack.pop()
 	def tc(self,coord):
 		vw = vh = max(self.width, self.height) / 2.0
@@ -888,30 +948,30 @@ class SVGReader(xml.sax.handler.ContentHandler):
 				a = args[0] / 180.0 * math.pi
 				mat = self.mmul(mat, (1,math.tan(a),0,1,0,0))
 		self.pushmatrix(mat)
-	def addPath(self, data,color):
+	def addPath(self, data,color,frame):
 		p = SVGPath(data,color)
 		for path in p.subpaths:
 			path.transform(self.ts)
-			self.frame.add(path)
-	def addPolyline(self, data,color, close=False):
+			frame.add(path)
+	def addPolyline(self, data,color,frame,close=False):
 		p = SVGPolyline(data, close,color)
 		for path in p.subpaths:
 			path.transform(self.ts)
-			self.frame.add(path)
-	def addLine(self, x1, y1, x2, y2, color):
+			frame.add(path)
+	def addLine(self, x1, y1, x2, y2, color,frame):
 		path = LaserPath()
 		path.add(PathLine((x1,y1), (x2,y2),True,color=color),color=color)
 		path.transform(self.ts)
-		self.frame.add(path)
-	def addRect(self, x1, y1, x2, y2,color):
+		frame.add(path)
+	def addRect(self, x1, y1, x2, y2,color,frame):
 		path = LaserPath()
 		path.add(PathLine((x1,y1), (x2,y1),True,color),color)
 		path.add(PathLine((x2,y1), (x2,y2),True,color),color)
 		path.add(PathLine((x2,y2), (x1,y2),True,color),color)
 		path.add(PathLine((x1,y2), (x1,y1),True,color),color)
 		path.transform(self.ts)
-		self.frame.add(path)
-	def addCircle(self, cx, cy, r,color):
+		frame.add(path)
+	def addCircle(self, cx, cy, r,color,frame):
 		cp = 0.55228475 * r
 		path = LaserPath()
 		path.add(PathBezier4((cx,cy-r), (cx+cp,cy-r), (cx+r,cy-cp), (cx+r,cy),True,color),color)
@@ -919,8 +979,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 		path.add(PathBezier4((cx,cy+r), (cx-cp,cy+r), (cx-r,cy+cp), (cx-r,cy),True,color),color)
 		path.add(PathBezier4((cx-r,cy), (cx-r,cy-cp), (cx-cp,cy-r), (cx,cy-r)),True,color,color)
 		path.transform(self.ts)
-		self.frame.add(path)
-	def addEllipse(self, cx, cy, rx, ry,color):
+		frame.add(path)
+	def addEllipse(self, cx, cy, rx, ry,color,frame):
 		cpx = 0.55228475 * rx
 		cpy = 0.55228475 * ry
 		path = LaserPath()
@@ -929,7 +989,7 @@ class SVGReader(xml.sax.handler.ContentHandler):
 		path.add(PathBezier4((cx,cy+ry), (cx-cpx,cy+ry), (cx-rx,cy+cpy), (cx-rx,cy),True,color),color)
 		path.add(PathBezier4((cx-rx,cy), (cx-rx,cy-cpy), (cx-cpx,cy-ry), (cx,cy-ry),True,color),color)
 		path.transform(self.ts)
-		self.frame.add(path)
+		frame.add(path)
 	def isvisible(self, attrs):
 		# skip elements with no stroke or fill
 		# hacky but gets rid of some gunk
@@ -959,6 +1019,8 @@ def load_svg(path):
 def write_ild(params, rframe, path, center=True):
 	global color_dict
 	#First write color frame
+	if '' in color_dict:
+		color_dict.pop('')
 	colors= list(color_dict.values())
 	clrs = []
 	q=0;
