@@ -36,17 +36,17 @@ We have 6 ATX PSU's that have been wired to just output 5V. On these PSUs, the g
 # 2. LEDbeams Crew-area
 The crew-area is usually a U-shaped group of tables that is seperated from the rest of the LAN. This area hosts the most valuable people at the LAN, soooo we gotta accentuate that with some LEDs of course! To achieve this, the LANCo owns 10 beams of 1.8 meters that have 60 leds/m WS2812b LED strips attatched. There are 106 LEDs per beam (although this is slightly different for some damaged LEDbeams). Each LEDbeam has a 3-pin JST-female connector at the input and a 3pin JST-male connector at the output (at I hope to solder this like this this year). We highly recommend to NOT chain more than 2 LEDbeams per PSU due to current losses in the LEDstrips. 
 
+[Insert picture of wiring here]
 The controllers of the LEDbeams will have a similar architecture to those of the seinpalen, except that the arduino+wiznet is replaced by an ESP8266. This means that the ledbeam controllers will receive their packets over wifi instead. 
 
-
-
+On the ESP8266, the same code in the folder Arduino_esp_code/ is used. Make sure to switch to the correct device in the arduino IDE before uploading.
 
 
 # 3. Logo
 
 In previous years, there was a large TesLAN logo on the wall behind the crew-area. This was first achieved by building the logo out of cardboard, and from the 4th edition a large PVC logo was built that was lit up using EL-Wire. However, this logo was a pain to set up and the EL-wire PSU broke at the 5th edition of the TesLAN. Hence, a new solution was needed.
 
-For this year, we will hire a laser projector and FB3 interface from T-organisations. The laser can project shapes by quickly rotating mirrors, such that the laser point moves quickly and to our pesky human eyes it looks like solid lines. In order to create animations/graphics for the laser, we have set up the following pipeline: 
+For this year, we will rent a laser projector and FB3 interface from T-organisations. The laser can project shapes by quickly rotating mirrors (scanners), such that the laser point moves quickly and to our pesky human eyes it looks like solid lines. In order to create animations/graphics for the laser, we have set up the following pipeline: 
 
 ## 3.1 Figure creation
 Use either Adobe Illustrator for still images, or Adobe Animate to generate animations. Make sure that all figures in the image only have a border/outline and don't have a fill. In case of an animation, it is imperative that the first frame of the animation contains all colors for that animation. I.e. you cannot introduce a new color halfway through the animation, if it was not also present in the first frame of the animation. Export your frame/animation as an SVG file/sequence. 
@@ -54,9 +54,9 @@ Use either Adobe Illustrator for still images, or Adobe Animate to generate anim
 ## 3.2 SVG Processing
 This is where the magic happens. We have SVG image(s) that consist of vectors, but we need a sequence of points that our laser point needs to jump to. Furthermore, the laser needs to know for each move if the laser should be enabled and what color the laser should be during the movement. 
 
-I have taken an SVG2ILD script from OpenLase and I have modified it to support xlink tags, transforms, and color (both CSS style header and in-tag stroke). The script reads an SVG file, and then using SAX XML parser and alot of magic we extract a list of points, the color and whether the laser should be on/off during the movement. The color table is generated based on the first frame on an animation, and is put in a seperate header file (see docs/ILDA_IDTF14_rev011.pdf for complete ILDA transfer specification that we use). Furthermore, we sort the points such that a semi-optimal path is found to connect all the points. I recommend you check the script yourself to understand what is going on!
+I have taken an SVG2ILD script from OpenLase and I have modified it to support xlink tags, transforms, and color (both CSS style header and in-tag stroke). The script reads an SVG file, and then using SAX XML parser and alot of magic we extract a list of points, the color and whether the laser should be on/off during the movement. The color table is generated based on the first frame on an animation, and is put in a seperate ILDA section (see docs/ILDA_IDTF14_rev011.pdf for complete ILDA transfer specification that we use). Furthermore, we sort the points such that a semi-optimal path is found to connect all the points. I recommend you check the script yourself to understand what is going on!
 
-To convert .svg files, go to Logo/SVG2ILD/run.py and put in the files there. There is a seperate section for single frames and for video SVG sequences. The main magic is happening in Logo/SVG2ILD/core.py. The script will output the .ild (ILDA) files in Logo\SVG2ILD\ILDA.
+To convert .svg files, go to Logo/SVG2ILD/run.py and put in the files there and then simply run it using python. There is a seperate section for single frames and for video SVG sequences. The main magic is happening in Logo/SVG2ILD/core.py. The script will output the .ild (ILDA) files in Logo\SVG2ILD\ILDA.
 
 These IDLA files can then be loaded into a laser program of choice. For this year, we will use pangolin quickshow as we have a pangolin FB3 interface for our laser. In quickshow, we simply import the .ild files as figures, and then we use the quickshow features to create a lasershow consisting of various animations. In quickshow, we can also adjust the laser for non-normal projection (keystone correction, video: https://www.youtube.com/watch?v=BOX0U0b0qSE). 
 
@@ -69,9 +69,5 @@ https://github.com/MaxWinsemius/SyncStream/
 
 
 
-
-
-#5. Continuation of the cycle
-When I started doing beun for LANCo in early 2023 there was little to no documentation on what goes where and how it all works together. That is the reason why I started this repo. Please, for our postertity, document the things that you do during your year(s) of beun at the LANCo, such that new LANCo members can easily pick up the task for the next edition of the TesLAN. I recommend you to host your own copy of this repo while you work on beun (or do a fork if you so desire).
 
 
