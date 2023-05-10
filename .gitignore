@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Wifi credentials
-Palen/wifi_credentials.h
+Arduino_esp_code/wifi_credentials.h
