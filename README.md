@@ -64,9 +64,8 @@ During the LAN, we will tune the settings in Logo/SVG2ILD/core.py so that our IL
 
 
 # 4. SyncStream
-https://github.com/MaxWinsemius/SyncStream/ 
-
-
+Heavily based on: https://github.com/MaxWinsemius/SyncStream/ 
+Yeah so SyncStream is pretty cool. SyncStream has two parts: one program that runs on the beun devices (that you can find in /Arduino_esp_code) and the other that runs on a computer that acts as a server (find this in /SyncStream). This year, I wrote a GUI for syncstream that allows for easy managing of all beun devices in the hall. You run it by running /SyncStream/Multi_device_GUI/main.py. It allows for beun devices to be grouped, or nested in virtual devices such that a group of devices acts as one large device. [TODO ELoy add some images/tutorial here]
 
 
 
