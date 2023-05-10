@@ -69,6 +69,7 @@ class beunding:
         self.x = x
         self.y = y
         self.type = "beunding"
+        self.previous_animation="blank"
         self.properties = {}
         self.text = ""
         self.number_of_created_objects = number_of_created_objects
@@ -135,6 +136,7 @@ class vdev:
         self.properties['Number'] = self.number_of_created_objects + 1
         self.properties['Name'] = "Vdev" + str(self.number_of_created_objects)
         self.properties['# LEDS'] = 0
+        self.previous_animation = "blank"
         self.properties['Group'] = "Default"
         self.properties['Animation'] = "blank"
         self.properties['Running'] = "No"
@@ -229,15 +231,24 @@ class App(Frame):
         self.c = Canvas(self.master, width=600, height=400, bd=2, relief='ridge')
 
         # if adding c.coords(rect, x - 10, y - 10, x + 10, y + 10)
-
-        self.gframe = Frame(self.master)
+        self.mframe=Frame(master, highlightbackground="#bababa", highlightthickness=1)
+        self.f0 = Frame(self.mframe)
+        self.lb1 = Label(self.f0, width=15, text="General", anchor='center')
+        self.ggframe = Frame(self.mframe)
+        self.bbutton1 = Button(self.ggframe, text="Run all", height=2, width=10, bg='#3da13f', fg='white',
+                              command=self.run_all)
+        self.gframe = Frame(self.mframe)
         self.button1 = Button(self.gframe, text="Blank all", height=5, width=10, bg='#be0e55', fg='white', command=self.blank_all)
+        self.f0.pack()
+        self.lb1.pack()
+        self.bbutton1.pack(anchor=NW)
+        self.ggframe.pack()
         self.button1.pack(anchor=NW)
-        self.gframe.pack()
-        self.gframe.place(x=25, y=450)
+        self.gframe.pack(pady=10,padx=4)
+        self.mframe.place(x=25, y=420)
 
         # groups
-        self.gframe = Frame(self.master, highlightbackground="black", highlightthickness=1)
+        self.gframe = Frame(self.master, highlightbackground="#bababa", highlightthickness=1)
         self.f0 = Frame(self.gframe)
         self.lb1 = Label(self.f0, width=15, text="Groups", anchor='center')
         self.f1 = Frame(self.gframe)
@@ -353,6 +364,7 @@ class App(Frame):
             self.properties = []
         for obj in self.obj_list:
             obj.selected = False
+        self.selected_obj=None
     def update_vdev_leds(self):
         for obj in self.obj_list:
             if obj.type == "vdev":
@@ -437,29 +449,34 @@ class App(Frame):
                     self.update_dragdroplist()
 
 
-    def blank_all(self):
-        if len(self.properties) > 0:
-            self.write_properties()
-            for i in self.properties:
-                i[1].destroy()
-            self.properties = []
+    def run_all(self):
+        self.deselect_all()
         for obj in self.obj_list:
-            obj.selected = False
-            obj.properties['Animation'] = "blank"
-
             if "Vdev" in obj.properties.keys() and obj.properties["Vdev"] != "None":
                 pass
             else:
-                obj.stop()
-                time.sleep(0.2)
-
+                #Update Vdev so that it knows its childeren
                 if obj.properties['type']=="vdev":
                     obj.childeren_objects = []
                     for obg in obj.properties['Childeren']:
                         obj.childeren_objects.append(self.find_object_by_name(obg))
                 obj.start()
 
-        self.selected_obj=None
+    def blank_all(self):
+        self.deselect_all()
+        for obj in self.obj_list:
+            if "Vdev" in obj.properties.keys() and obj.properties["Vdev"] != "None":
+                pass
+            else:
+                obj.previous_animation = obj.properties['Animation']
+                obj.properties['Animation'] = "blank"
+                #Update Vdev so that it knows its childeren
+                if obj.properties['type']=="vdev":
+                    obj.childeren_objects = []
+                    for obg in obj.properties['Childeren']:
+                        obj.childeren_objects.append(self.find_object_by_name(obg))
+                obj.start()
+                obj.properties['Animation']=obj.previous_animation
 
     def save_setup(self):
 
