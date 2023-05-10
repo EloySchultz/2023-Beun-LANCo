@@ -30,6 +30,7 @@ import os
 # Maybe a percentage counter for each device running an animation?
 # Make animation loop toggelable
 # Add invert flag to objects
+# Get packet length etc from childeren instead of vdev
 
 
 class DragDropListbox(Listbox):
@@ -82,8 +83,6 @@ class beunding:
         self.properties['Group'] = "Default"
         self.properties['Vdev'] = "None"
         self.properties['Animation'] = "blank"
-        self.properties['Duration'] = "69"
-        self.properties['Speed'] = "1"
         self.properties['Running'] = "No"
         self.p = None
         self.selected = False
@@ -138,8 +137,6 @@ class vdev:
         self.properties['# LEDS'] = 0
         self.properties['Group'] = "Default"
         self.properties['Animation'] = "blank"
-        self.properties['Duration'] = "69"
-        self.properties['Speed'] = "1"
         self.properties['Running'] = "No"
         self.PACKET_LENGTH = 320
         self.MAX_INDEX = 4095
@@ -665,7 +662,7 @@ class App(Frame):
                     butt.pack(side=LEFT)
                     butt2.pack(side=LEFT)
                     entries.append((child_select, k, sv,"Child_select"))
-                m.place(x=610, y=20 + 320)
+                m.place(x=610, y=20 + 210)
 
                 packed=1
             else:
@@ -685,15 +682,18 @@ class App(Frame):
             pass
         else:
             field="StartStop"
-            f = Frame(self.master, bg="blue")
+            f = Frame(self.master)
             g = Button(f, text="⏵", command=self.start_wrapper,bg='#be0e55', fg='white', width = 4, height=1)
             g2 = Button(f, text="⏹", command=self.selected_obj.stop,bg='#be0e55', fg='white', width = 4, height=1)
             g['font']=tkFont.Font(family='Arial', size=14)
             g2['font'] = tkFont.Font(family='Arial', size=14)
-            g.pack(side=RIGHT, padx=2)
-            g2.pack(side=RIGHT, padx=2)
+            g.pack(side=RIGHT, padx=4)
+            g2.pack(side=RIGHT, padx=4)
             #f.pack()
-            f.place(x=610, y=20+i*30 - 30*(dict['type']=="vdev"))
+            if dict['type']=="vdev":
+                f.place(x=610, y=20+445)
+            else:
+                f.place(x=610, y=20 + 330)
             entries.append((g2, f, None, field))
             i+=1
         return entries
