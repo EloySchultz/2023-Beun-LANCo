@@ -1,0 +1,14 @@
+For these measurements, I use the regenboog animation like:
+regenboog(paal, 300, speed=3, brightness=x).
+The voltage at the input (before the wiring) is 5.08V.
+brightness	current(A)	power(W)
+0.1		0.549		2.79
+0.2		1.286		6.53288
+0.3		1.770		8.9916
+0.4		2.510		12.7508
+0.5		2.950		14.986
+0.6		3.450		17.526
+0.7		3.750		19.05
+0.8		4.250		21.59
+0.9		4.450		22.60
+1.0		4.850		24.638		
