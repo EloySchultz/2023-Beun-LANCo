@@ -78,9 +78,41 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #endif
 
 
-#if defined(LEDBEAM_6)
+#if defined(LEDBEAM_1)
   #define USING_ESP8266 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0F};
+  byte ip[] = { 192, 168, 2, 157 };
+  #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
+  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+#endif
+
+#if defined(LEDBEAM_2)
+  #define USING_ESP8266 1;
+  byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x10};
+  byte ip[] = { 192, 168, 2, 157 };
+  #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
+  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+#endif
+
+#if defined(LEDBEAM_3)
+  #define USING_ESP8266 1;
+  byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x11};
+  byte ip[] = { 192, 168, 2, 157 };
+  #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
+  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+#endif
+
+#if defined(LEDBEAM_4)
+  #define USING_ESP8266 1;
+  byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x12};
+  byte ip[] = { 192, 168, 2, 157 };
+  #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
+  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+#endif
+
+#if defined(LEDBEAM_5)
+  #define USING_ESP8266 1;
+  byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x13};
   byte ip[] = { 192, 168, 2, 157 };
   #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
   #define NUM_LEDS 106 //Ledbeam has 106 LEDs
