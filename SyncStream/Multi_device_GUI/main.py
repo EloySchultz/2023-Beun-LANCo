@@ -18,6 +18,22 @@ from single_stream import single_stream, vdev_stream
 import animations_new
 from multiprocessing import Process
 import os
+import animations_new  # import c_animations
+import inspect
+
+
+# python2
+
+def read_animations():
+    a = inspect.getmembers(animations_new.c_animations(), predicate=inspect.ismethod)
+    animations = []
+    blacklist = ["__init__", "cycle","set_colour","try_set_written"]
+    for b in a:
+        if not (b[0] in blacklist):
+            animations.append(b[0])
+    return animations
+
+
 # I know this program is written....poorly. But then again I spent absolute minimum time building this. Sorry future LANCo ;)
 
 
@@ -201,7 +217,7 @@ class App(Frame):
         self.tempy = 0
         self.selected_obj = None
         self.temp_square = -1
-        self.animations = ["blank", "regenboog", "BBB"]
+        self.animations = read_animations()
 
         self.groups = ['Default']
 
@@ -492,6 +508,8 @@ class App(Frame):
 
     def clear_objects(self):
         self.c.delete("all")
+        for obj in self.obj_list:
+            obj.stop()
         self.obj_list=[]
         self.create_grid()
     def load_setup(self):
@@ -710,7 +728,7 @@ class App(Frame):
             if dict['type']=="vdev":
                 f.place(x=610, y=20+445)
             else:
-                f.place(x=610, y=20 + 330)
+                f.place(x=610, y=20 + 370)
             entries.append((g2, f, None, field))
             i+=1
         return entries

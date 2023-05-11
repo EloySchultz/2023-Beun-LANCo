@@ -4,6 +4,8 @@ import math
 import socket
 
 
+
+animation_class = animations_new.c_animations()
 class beunding_streamer:
     def __init__(self,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
         self.IP = IP
@@ -54,7 +56,6 @@ class vdev_streamer:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.fb={}
     def setLed(self, index, a):
-
         self.fb[index] = tuple(a)
 
     def setLed_for_real(self, index, *a):
@@ -80,8 +81,8 @@ class vdev_streamer:
             IP = self.child_ips[q]
             PORT=self.child_ports[q]
             N = self.child_leds[q]
-            for i in range(curr_index, N):
-                self.command = bytes()
+            self.command = bytes()
+            for i in range(0, N):
                 if curr_index + i in self.fb.keys():
                     self.setLed_for_real(i, self.fb[curr_index + i])
             maxbytes = self.PACKET_LENGTH - self.PACKET_LENGTH % 3
@@ -91,7 +92,9 @@ class vdev_streamer:
                 for i in range(math.ceil(len(self.command) / maxbytes) - 1):
                     self.sock.sendto(self.command[i * maxbytes:(i + 1) * maxbytes], (IP, PORT))
                 self.sock.sendto(self.command[(i + 1) * maxbytes:], (IP, PORT))
-        self.command=bytes()
+            self.command = bytes()
+            curr_index+=N
+
         self.fb={}
     pass
 def single_stream(N, animation_name,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
@@ -101,8 +104,8 @@ def single_stream(N, animation_name,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH)
     enabled=1
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
-        animation = getattr(animations_new, animation_name)
-        animation(beunding, N, duration = 10)
+        animation = getattr(animation_class, animation_name)
+        animation(beunding, N, duration = 1000)
         enabled=0
 
 def vdev_stream(N, animation_name,child_ips,child_ports,child_leds,MAX_INDEX, BITMULT, PACKET_LENGTH):
@@ -112,6 +115,6 @@ def vdev_stream(N, animation_name,child_ips,child_ports,child_leds,MAX_INDEX, BI
     enabled=1
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
-        animation = getattr(animations_new, animation_name)
-        animation(beunding, N, duration = 10)
+        animation = getattr(animation_class, animation_name)
+        animation(beunding, N, duration = 1000)
         enabled=0
