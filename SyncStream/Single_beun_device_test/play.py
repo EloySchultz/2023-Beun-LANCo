@@ -23,14 +23,15 @@ paal = beunding("192.168.2.152", 8888, 320, 4095)
 while(1):
     regenboog(paal, 300, speed=1,duration=5, brightness=0.3)
     show_text(paal, 300,string="WELCOME TO THE TESLAN!",duration=1, dt=0.1,colour=(2,0,2))
-    linerider(paal, 300, 3,duration=5, dt=0.02, colour = (3,0,1))
-    vertical_rainbow(paal, 300, duration=5, dt=0.02, brightness=0.3, speed=1)
     red_flame(paal, 300, duration=5, dt=0.02)
-    white_flame(paal, 300, duration=5, dt=0.02)
-    yellow_flame(paal, 300, duration=5, dt=0.02)
-    green_flame(paal, 300, duration=5, dt=0.02)
-    pink_flame(paal, 300, duration=5, dt=0.02)
-    blue_flame(paal, 300, duration=5, dt=0.02)
+    #linerider(paal, 300, 3,duration=5, dt=0.02, colour = (3,0,1))
+    #vertical_rainbow(paal, 300, duration=5, dt=0.02, brightness=0.3, speed=1)
+    #
+    #white_flame(paal, 300, duration=5, dt=0.02)
+    #yellow_flame(paal, 300, duration=5, dt=0.02)
+    # green_flame(paal, 300, duration=5, dt=0.02)
+    # pink_flame(paal, 300, duration=5, dt=0.02)
+    # blue_flame(paal, 300, duration=5, dt=0.02)
     
     
     # linerider(paal, 300, 3,duration=3, dt=0.02, colour = (1,1,2))
