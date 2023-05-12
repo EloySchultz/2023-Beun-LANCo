@@ -46,7 +46,7 @@ def read_animations():
 # Maybe a percentage counter for each device running an animation?
 # Make animation loop toggelable
 # Add invert flag to objects
-# Get packet length etc from childeren instead of vdev
+# Get packet length etc from Children instead of vdev
 
 
 class DragDropListbox(Listbox):
@@ -160,7 +160,7 @@ class vdev:
         self.MAX_INDEX = 4095
         self.BITMULT = int(2 ** 4)
 
-        self.properties['Childeren'] = []
+        self.properties['Children'] = []
         self.p = None
         self.fb = []
         self.selected = False
@@ -179,7 +179,7 @@ class vdev:
         child_ips=[]
         child_ports=[]
         child_leds=[]
-        for obj in self.childeren_objects:
+        for obj in self.Children_objects:
             child_ips.append(obj.properties["IP Address"])
             child_ports.append(int(obj.properties["Port"]))
             child_leds.append(int(obj.properties['# LEDS']))
@@ -351,8 +351,8 @@ class App(Frame):
                 else:
                     if i == "Vdev" or i == "Name" or i== "Running":
                         self.selected_obj.properties[i] = self.properties[j][2].get()
-                    elif i == "Childeren":
-                        print("Writing childeren")
+                    elif i == "Children":
+                        print("Writing Children")
                         self.selected_obj.properties[i] = list(self.properties[j][0].get(0,10000))
                         j+=1 #Skip the field that is used to add things to list
                         j+=1 #Skip the StartStop field
@@ -386,7 +386,7 @@ class App(Frame):
             if obj.type == "vdev":
                 #Read LEC Count
                 ledsum = 0
-                for nm in obj.properties['Childeren']:
+                for nm in obj.properties['Children']:
                     objecttt= self.find_object_by_name(nm)
                     if objecttt!="":
                         ledsum += int(objecttt.properties['# LEDS'])
@@ -394,7 +394,7 @@ class App(Frame):
 
     def update_dragdroplist(self):
         if self.selected_obj != None:
-            i="Childeren"
+            i="Children"
             for j in self.properties:
                 if i == j[3]:
                     if isinstance(j[0],DragDropListbox):
@@ -471,11 +471,11 @@ class App(Frame):
             if "Vdev" in obj.properties.keys() and obj.properties["Vdev"] != "None":
                 pass
             else:
-                #Update Vdev so that it knows its childeren
+                #Update Vdev so that it knows its Children
                 if obj.properties['type']=="vdev":
-                    obj.childeren_objects = []
-                    for obg in obj.properties['Childeren']:
-                        obj.childeren_objects.append(self.find_object_by_name(obg))
+                    obj.Children_objects = []
+                    for obg in obj.properties['Children']:
+                        obj.Children_objects.append(self.find_object_by_name(obg))
                 obj.start()
 
     def blank_all(self):
@@ -486,11 +486,11 @@ class App(Frame):
             else:
                 obj.previous_animation = obj.properties['Animation']
                 obj.properties['Animation'] = "blank"
-                #Update Vdev so that it knows its childeren
+                #Update Vdev so that it knows its Children
                 if obj.properties['type']=="vdev":
-                    obj.childeren_objects = []
-                    for obg in obj.properties['Childeren']:
-                        obj.childeren_objects.append(self.find_object_by_name(obg))
+                    obj.Children_objects = []
+                    for obg in obj.properties['Children']:
+                        obj.Children_objects.append(self.find_object_by_name(obg))
                 obj.start()
                 obj.properties['Animation']=obj.previous_animation
 
@@ -583,9 +583,9 @@ class App(Frame):
                             obj.start()
                     else:
                         if obj.properties['type'] == "vdev":
-                            obj.childeren_objects = []
-                            for obg in obj.properties['Childeren']:
-                                obj.childeren_objects.append(self.find_object_by_name(obg))
+                            obj.Children_objects = []
+                            for obg in obj.properties['Children']:
+                                obj.Children_objects.append(self.find_object_by_name(obg))
                         obj.start()
             self.op4.set("")
         else:
@@ -606,8 +606,8 @@ class App(Frame):
                 if i[3] == "Child_select":
                     new_child = i[2].get()
         if not new_child == "":
-            if new_child in self.selected_obj.properties['Childeren']:
-                self.selected_obj.properties['Childeren'].remove(new_child)
+            if new_child in self.selected_obj.properties['Children']:
+                self.selected_obj.properties['Children'].remove(new_child)
                 chld = self.find_object_by_name(new_child)
                 chld.properties["Vdev"] = "None"
         self.read_properties()
@@ -621,8 +621,8 @@ class App(Frame):
                 if i[3] == "Child_select":
                     new_child = i[2].get()
         if not new_child=="":
-            if not new_child in self.selected_obj.properties['Childeren']:
-                self.selected_obj.properties['Childeren'].append(new_child)
+            if not new_child in self.selected_obj.properties['Children']:
+                self.selected_obj.properties['Children'].append(new_child)
                 chld=self.find_object_by_name(new_child)
                 chld.properties["Vdev"]=self.selected_obj.properties['Name']
             else:
@@ -634,9 +634,9 @@ class App(Frame):
         self.write_properties()
         obj=self.selected_obj
         if obj.properties['type'] == "vdev":
-            obj.childeren_objects = []
-            for obg in obj.properties['Childeren']:
-                obj.childeren_objects.append(self.find_object_by_name(obg))
+            obj.Children_objects = []
+            for obg in obj.properties['Children']:
+                obj.Children_objects.append(self.find_object_by_name(obg))
         self.selected_obj.start()
     def makeform(self, dict):
         entries = []
@@ -644,7 +644,7 @@ class App(Frame):
 
         for field in list(dict.keys()):
             row = Frame(self.master)
-            if field != "Childeren":
+            if field != "Children":
                 lab = Label(row, width=10, text=field, anchor='w')
             sv = StringVar(value=dict[field])
             #sv.trace_add('write', write_properties())
@@ -669,15 +669,15 @@ class App(Frame):
             elif field == "Vdev" or field=="Name":
                 ent = Label(row, width=10, text=dict[field], anchor='w')
 
-            elif field == "Childeren":
+            elif field == "Children":
 
                 m = Frame(self.master)
                 k = Frame(m)
                 sv = StringVar()
-                lab = Label(k, width=10, text="Childeren:", anchor='w')
+                lab = Label(k, width=10, text="Children:", anchor='w')
                 ent = DragDropListbox(k, width=25)
                 ent.config(width=25)
-                for child in self.selected_obj.properties['Childeren']:
+                for child in self.selected_obj.properties['Children']:
                     ent.insert(END, child)
                 packed = 1
                 k.pack(side=TOP, fill=X, padx=2, pady=2)
@@ -686,7 +686,7 @@ class App(Frame):
                 entries.append((ent, k, sv,field))
                 k = Frame(m)
                 a = [h for h in self.obj_list if h.type == "beunding"]
-                e = [n.properties['Name'] for n in list(set(a))]  # - set(self.selected_obj.properties['Childeren']
+                e = [n.properties['Name'] for n in list(set(a))]  # - set(self.selected_obj.properties['Children']
                 if len(e) > 0:
                     child_select = OptionMenu(k, sv, *e)
                     child_select.config(width=10)
