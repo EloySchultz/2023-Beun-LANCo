@@ -117,7 +117,7 @@ class beunding:
     def start(self):
 
         if self.properties['Vdev'] == "None":
-            print("Starting thread for normal beunding")
+            #print("Starting thread for normal beunding")
             if self.p != None:
                 self.stop()
             self.fb = np.zeros((int(self.properties['# LEDS'])))  # Create frame buffer
@@ -171,10 +171,8 @@ class vdev:
 
     def start(self):
 
-        print("Starting thread Vdev")
+        #print("Starting thread Vdev")
         self.fb = {}
-        print("Before starting process")
-
         if self.p != None:
             self.stop()
         print(self.p)
@@ -199,9 +197,7 @@ class vdev:
                                                    self.PACKET_LENGTH))
         self.p.daemon = True
         self.p.start()
-        # single_stream(self)
-        # time.sleep(1)
-        print("Starting Process here")
+
 
     def stop(self):
         if self.p!=None:
@@ -344,12 +340,10 @@ class App(Frame):
             self.c.create_line([(0, i), (w, i)],fill="#CFCFCF", tag='grid_line')
 
     def write_properties(self,a=1,b=1,c=1):
-        #print(random.randint(0,100))
         j=0
         if self.selected_obj==None or len(self.properties)==0:
             pass
         else:
-            #print("KAAS")
             for i in self.selected_obj.properties.keys():
                 if (i == "# LEDS" and self.selected_obj.type=="vdev") or i == "type":
                     pass
@@ -357,7 +351,6 @@ class App(Frame):
                     if i == "Vdev" or i == "Name" or i== "Running" or i == "Invert":
                         self.selected_obj.properties[i] = self.properties[j][2].get()
                     elif i == "Children":
-                        print("Writing Children")
                         self.selected_obj.properties[i] = list(self.properties[j][0].get(0,10000))
                         j+=1 #Skip the field that is used to add things to list
                         j+=1 #Skip the StartStop field

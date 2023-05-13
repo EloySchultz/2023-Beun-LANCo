@@ -110,7 +110,6 @@ def single_stream(N, animation_name,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_
     #global obj_list
     N = int(N)
     beunding = beunding_streamer(N,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH)
-    print("starting streamer with" + str(invert))
     enabled=1
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
