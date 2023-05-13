@@ -101,22 +101,23 @@ class c_animations():
             sleep(dt)
                     
 
-    def sinus(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(3,3,3)):
+    def sinus(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(13,5,3)):
         Nsteps = int(duration//dt)
+        #
+        # period = []
+        # for i in range(32):
+        #     #val =
+        #     #val = [int(abs(c)) for c in val]
+        #     period.append(val)
 
-        period = []
-        for i in range(32):
-            val = [c*sin(pi*i/32) for c in colour]
-            val = [int(abs(c)) for c in val]
-            period.append(val)
-
-        for _ in range(Nsteps//len(period)):
-            for col in period:
-                for i in range(N):
-                    beunding.setLed(i, col)
-                beunding.send()
-                
-                sleep(dt)
+        for q in range(Nsteps):
+            col = [int(round((1/2+ 1/2*sin(pi*q/32))*c)) for c in colour]
+            print(col)
+            for i in range(N):
+                beunding.setLed(i, col)
+            beunding.send()
+            
+            sleep(dt)
 
     def set_colour(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(0,0,0)):
         for i in range(N):
