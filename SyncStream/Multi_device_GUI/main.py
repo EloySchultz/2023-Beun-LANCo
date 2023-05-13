@@ -96,6 +96,7 @@ class beunding:
         self.properties['Port'] = "8888"
         self.properties['MAC Address'] = "FF-FF-FF-FF-FF"
         self.properties['Packet length'] = "320"
+        self.properties['Invert'] = False
         self.properties['# LEDS'] = "300"
         self.properties['Group'] = "Default"
         self.properties['Vdev'] = "None"
@@ -125,6 +126,7 @@ class beunding:
 
             self.p = Process(target=single_stream, args=(self.properties['# LEDS'],
                                                          self.properties['Animation'],
+                                                         self.properties["Invert"],
                                                          self.IP,
                                                          self.PORT,
                                                          self.MAX_INDEX,
@@ -179,17 +181,19 @@ class vdev:
         child_ips=[]
         child_ports=[]
         child_leds=[]
+        child_inverts=[]
         for obj in self.Children_objects:
             child_ips.append(obj.properties["IP Address"])
             child_ports.append(int(obj.properties["Port"]))
             child_leds.append(int(obj.properties['# LEDS']))
-
+            child_inverts.append(int(obj.properties['Invert']))
 
         self.p = Process(target=vdev_stream, args=(self.properties["# LEDS"],
                                                    self.properties['Animation'],
                                                    child_ips,
                                                    child_ports,
                                                    child_leds,
+                                                   child_inverts,
                                                    self.MAX_INDEX,
                                                    self.BITMULT,
                                                    self.PACKET_LENGTH))
@@ -228,6 +232,7 @@ class App(Frame):
         self.master.config(menu=self.menu)
         self.master.title("TesLAN Beun manager")
         self.master.geometry("800x600")
+        self.master.iconbitmap("Logo_Teslan_coil.ico")
         self.filemenu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='File', menu=self.filemenu)
         self.filemenu.add_command(label='Save setup', command=self.save_setup)
@@ -349,7 +354,7 @@ class App(Frame):
                 if (i == "# LEDS" and self.selected_obj.type=="vdev") or i == "type":
                     pass
                 else:
-                    if i == "Vdev" or i == "Name" or i== "Running":
+                    if i == "Vdev" or i == "Name" or i== "Running" or i == "Invert":
                         self.selected_obj.properties[i] = self.properties[j][2].get()
                     elif i == "Children":
                         print("Writing Children")
@@ -357,7 +362,12 @@ class App(Frame):
                         j+=1 #Skip the field that is used to add things to list
                         j+=1 #Skip the StartStop field
                     else:
-                        self.selected_obj.properties[i] = self.properties[j][0].get()
+                        try:
+                            self.selected_obj.properties[i] = self.properties[j][0].get()
+                        except:
+                            if (len(self.properties)>0):
+                                print("An exception occurred")
+
                 j+=1
         self.read_properties()
         return True
@@ -668,7 +678,8 @@ class App(Frame):
                 ent = Label(row, width=10, text=dict[field], anchor='w')
             elif field == "Vdev" or field=="Name":
                 ent = Label(row, width=10, text=dict[field], anchor='w')
-
+            elif field == "Invert":
+                ent = Checkbutton(row, text='Invert',variable=sv, onvalue=1, offvalue=0, command=self.write_properties)
             elif field == "Children":
 
                 m = Frame(self.master)
@@ -728,7 +739,7 @@ class App(Frame):
             if dict['type']=="vdev":
                 f.place(x=610, y=20+445)
             else:
-                f.place(x=610, y=20 + 370)
+                f.place(x=610, y=20 + 390)
             entries.append((g2, f, None, field))
             i+=1
         return entries
@@ -741,6 +752,8 @@ class App(Frame):
 
 if __name__ == "__main__":
     master=Tk()
+    #
+
     #
     a=App(master)
     #master.mainloop()
