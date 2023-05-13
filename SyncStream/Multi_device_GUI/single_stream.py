@@ -7,7 +7,9 @@ import socket
 
 animation_class = animations_new.c_animations()
 class beunding_streamer:
-    def __init__(self,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
+    def __init__(self,N,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
+        self.N =N
+        self.invert=int(invert)
         self.IP = IP
         self.PORT = PORT
         self.PACKET_LENGTH = PACKET_LENGTH
@@ -17,6 +19,9 @@ class beunding_streamer:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     def setLed(self, index, *a):
         # Creates a 3-byte bytestring that specifies one led
+
+        if self.invert==1:
+            index = self.N - index -1
         if len(a) == 1:
             r, g, b = a[0]
         else:
@@ -45,10 +50,11 @@ class beunding_streamer:
         self.command = bytes()
 
 class vdev_streamer:
-    def __init__(self, child_ips,child_ports,child_leds,MAX_INDEX, BITMULT, PACKET_LENGTH):
+    def __init__(self, child_ips,child_ports,child_leds,child_inverts,MAX_INDEX, BITMULT, PACKET_LENGTH):
         self.PACKET_LENGTH = PACKET_LENGTH
         self.MAX_INDEX = MAX_INDEX
         self.BITMULT = BITMULT
+        self.child_inverts = child_inverts
         self.child_ips=child_ips
         self.child_ports=child_ports
         self.child_leds=child_leds
@@ -58,12 +64,14 @@ class vdev_streamer:
     def setLed(self, index, a):
         self.fb[index] = tuple(a)
 
-    def setLed_for_real(self, index, *a):
+    def setLed_for_real(self, index,invert,N,*a):
         # Creates a 3-byte bytestring that specifies one led
         if len(a) == 1:
             r, g, b = a[0]
         else:
             r, g, b = a
+        if invert==1:
+            index = N - index -1
 
         if index > self.MAX_INDEX:
             raise ValueError
@@ -81,10 +89,11 @@ class vdev_streamer:
             IP = self.child_ips[q]
             PORT=self.child_ports[q]
             N = self.child_leds[q]
+            invert=int(self.child_inverts[q])
             self.command = bytes()
             for i in range(0, N):
                 if curr_index + i in self.fb.keys():
-                    self.setLed_for_real(i, self.fb[curr_index + i])
+                    self.setLed_for_real(i,invert,N, self.fb[curr_index + i])
             maxbytes = self.PACKET_LENGTH - self.PACKET_LENGTH % 3
             if len(self.command) < self.PACKET_LENGTH:
                 self.sock.sendto(self.command, (IP, PORT))
@@ -97,10 +106,11 @@ class vdev_streamer:
 
         self.fb={}
     pass
-def single_stream(N, animation_name,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
+def single_stream(N, animation_name,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
     #global obj_list
     N = int(N)
-    beunding = beunding_streamer(IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH)
+    beunding = beunding_streamer(N,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH)
+    print("starting streamer with" + str(invert))
     enabled=1
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
@@ -108,10 +118,10 @@ def single_stream(N, animation_name,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH)
         animation(beunding, N, duration = 1000)
         enabled=0
 
-def vdev_stream(N, animation_name,child_ips,child_ports,child_leds,MAX_INDEX, BITMULT, PACKET_LENGTH):
+def vdev_stream(N, animation_name,child_ips,child_ports,child_leds,child_inverts,MAX_INDEX, BITMULT, PACKET_LENGTH):
     #global obj_list
     N = int(N)
-    beunding = vdev_streamer(child_ips,child_ports,child_leds,MAX_INDEX, BITMULT, PACKET_LENGTH)
+    beunding = vdev_streamer(child_ips,child_ports,child_leds,child_inverts,MAX_INDEX, BITMULT, PACKET_LENGTH)
     enabled=1
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
