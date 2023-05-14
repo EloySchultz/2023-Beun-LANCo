@@ -4,7 +4,6 @@ import math
 import socket
 
 
-
 animation_class = animations_new.c_animations()
 class beunding_streamer:
     def __init__(self,N,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
@@ -113,7 +112,10 @@ def single_stream(N, animation_name,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_
     enabled=1
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
-        animation = getattr(animation_class, animation_name)
+        if hasattr(animation_class, animation_name):
+            animation = getattr(animation_class, animation_name)
+        else:
+            raise ValueError("Animation " + str(animation_name) + " does not exist")
         animation(beunding, N, duration = 1000)
         enabled=0
 
