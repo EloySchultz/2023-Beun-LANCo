@@ -24,6 +24,8 @@ import inspect
 
 # python2
 
+
+
 def read_animations():
     a = inspect.getmembers(animations_new.c_animations(), predicate=inspect.ismethod)
     animations = []
@@ -320,7 +322,18 @@ class App(Frame):
         self.c.pack(side=TOP, anchor=NW)
         self.create_grid()
 
+    def check_input(self,event,lst,box): #For animation autofill
+        value = event.widget.get()
 
+        if value == '':
+            box['values'] = lst
+        else:
+            data = []
+            for item in lst:
+                if value.lower() in item.lower():
+                    data.append(item)
+
+            box['values'] = data
 
     def callback(self,event):
         self.tempx, self.tempy = event.x, event.y
@@ -404,6 +417,11 @@ class App(Frame):
                         j[0].delete(0,END)
                         for q in self.selected_obj.properties[i]:
                             j[0].insert(END,q)
+            i = "Animation"
+            for j in self.properties:
+                if i == j[3]:
+                    if isinstance(j[0], ttk.Combobox):
+                        j[0].set(self.selected_obj.properties['Animation'])
     def read_properties(self,a=1,b=1,c=1):
         if self.selected_obj != None:
             for i in self.selected_obj.properties.keys():
@@ -420,7 +438,7 @@ class App(Frame):
                                     j[0].config(font=('Arial bold', 14), fg="red")
 
                         if isinstance(j[0],ttk.Combobox):
-                            if i == "Child_select":
+                            if i == "Child_select" or i =="Animation":
                                 pass
                             else:
                                 j[0].set(self.selected_obj.properties[i])
@@ -656,11 +674,12 @@ class App(Frame):
                 en = DISABLED
                 if 'Vdev' in dict.keys():
                     if dict['Vdev'] == "None":
-                        en = "readonly"
+                        en = "normal"
                 if dict['type'] == "vdev":
-                    en = "readonly"
+                    en = "normal"
                 ent = ttk.Combobox(row,width=12)
                 ent.bind('<<ComboboxSelected>>', self.write_properties)
+                ent.bind('<KeyRelease>', lambda event, lst=self.animations, box=ent:  self.check_input(event,lst,box))
                 ent['values'] = self.animations
                 ent.configure(state=en)
             elif field == "Group":
