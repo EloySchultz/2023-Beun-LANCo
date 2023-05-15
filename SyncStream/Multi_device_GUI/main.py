@@ -21,11 +21,6 @@ import os
 import animations_new  # import c_animations
 import inspect
 
-
-# python2
-
-
-
 def read_animations():
     a = inspect.getmembers(animations_new.c_animations(), predicate=inspect.ismethod)
     animations = []
@@ -83,7 +78,8 @@ def doNothing(a=1):
 
 
 class beunding:
-    def __init__(self, x, y,number_of_created_objects):
+    def __init__(self,a, x, y,number_of_created_objects):
+        self.a = a
         self.x = x
         self.y = y
         self.type = "beunding"
@@ -113,9 +109,13 @@ class beunding:
         self.MAX_INDEX = 4095
         self.BITMULT = int(2 ** 4)
         self.command = bytes()
+        self.deleteme=0
 
         number_of_created_objects += 1
 
+    def delete_me(self):
+        self.deleteme=1
+            #Uh I guess that it is still referenced SOMEWHERE as __del__ is apparently not called... but whatever, who is going to delete millions of objects anyway?
     def start(self):
 
         if self.properties['Vdev'] == "None":
@@ -142,10 +142,18 @@ class beunding:
             self.p.terminate()
             self.p = None
 
+    def blank(self):
+        self.previous_animation=self.properties['Animation']
+        self.properties['Animation'] = "blank"
+        self.stop()
+        self.start()
+        self.properties['Animation'] = self.previous_animation
+
 
 
 class vdev:
-    def __init__(self, x, y,number_of_created_objects):
+    def __init__(self, a,x, y,number_of_created_objects):
+        self.a = a
         self.type = "vdev"
         self.x = x
         self.y = y
@@ -163,48 +171,58 @@ class vdev:
         self.PACKET_LENGTH = 320
         self.MAX_INDEX = 4095
         self.BITMULT = int(2 ** 4)
-
+        self.Children_objects=[]
+        self.deleteme=0
+ 
         self.properties['Children'] = []
         self.p = None
         self.fb = []
         self.selected = False
         self.rect = ""
         number_of_created_objects += 1
+    def delete_me(self):
+        self.deleteme=1
 
     def start(self):
 
         #print("Starting thread Vdev")
-        self.fb = {}
-        if self.p != None:
-            self.stop()
-        print(self.p)
-        child_ips=[]
-        child_ports=[]
-        child_leds=[]
-        child_inverts=[]
-        for obj in self.Children_objects:
-            child_ips.append(obj.properties["IP Address"])
-            child_ports.append(int(obj.properties["Port"]))
-            child_leds.append(int(obj.properties['# LEDS']))
-            child_inverts.append(int(obj.properties['Invert']))
+        if len(self.Childeren_objects>0):
+            self.fb = {}
+            if self.p != None:
+                self.stop()
+            child_ips=[]
+            child_ports=[]
+            child_leds=[]
+            child_inverts=[]
+            for obj in self.Children_objects:
+                child_ips.append(obj.properties["IP Address"])
+                child_ports.append(int(obj.properties["Port"]))
+                child_leds.append(int(obj.properties['# LEDS']))
+                child_inverts.append(int(obj.properties['Invert']))
 
-        self.p = Process(target=vdev_stream, args=(self.properties["# LEDS"],
-                                                   self.properties['Animation'],
-                                                   child_ips,
-                                                   child_ports,
-                                                   child_leds,
-                                                   child_inverts,
-                                                   self.MAX_INDEX,
-                                                   self.BITMULT,
-                                                   self.PACKET_LENGTH))
-        self.p.daemon = True
-        self.p.start()
+            self.p = Process(target=vdev_stream, args=(self.properties["# LEDS"],
+                                                       self.properties['Animation'],
+                                                       child_ips,
+                                                       child_ports,
+                                                       child_leds,
+                                                       child_inverts,
+                                                       self.MAX_INDEX,
+                                                       self.BITMULT,
+                                                       self.PACKET_LENGTH))
+            self.p.daemon = True
+            self.p.start()
 
 
     def stop(self):
         if self.p!=None:
             self.p.terminate()
             self.p=None
+    def blank(self):
+        self.previous_animation=self.properties['Animation']
+        self.properties['Animation'] = "blank"
+        self.stop()
+        self.start()
+        self.properties['Animation'] = self.previous_animation
 
 
 
@@ -224,6 +242,7 @@ class App(Frame):
         self.groups = ['Default']
 
         self.adding = 0
+        self.moving = 0
         self.adding_type = "beunding"
         self.master = master
         self.menu = Menu(self.master, tearoff=0)
@@ -361,7 +380,7 @@ class App(Frame):
                 if (i == "# LEDS" and self.selected_obj.type=="vdev") or i == "type":
                     pass
                 else:
-                    if i == "Vdev" or i == "Name" or i== "Running" or i == "Invert":
+                    if i == "Vdev" or i == "Name" or i=="Number" or i== "Running" or i == "Invert":
                         self.selected_obj.properties[i] = self.properties[j][2].get()
                     elif i == "Children":
                         self.selected_obj.properties[i] = list(self.properties[j][0].get(0,10000))
@@ -462,14 +481,20 @@ class App(Frame):
                         #j[2]=selected_obj.properties[i]
 
     def key(self,event):
-
+        if self.moving ==1:
+            self.c.coords(self.selected_obj.text,event.x,event.y)
+            self.moving=0
+            self.selected_obj.x = event.x
+            self.selected_obj.y = event.y
+            self.c.unbind('<Motion>')
+            self.c.pack()
         if self.adding==1:
             self.adding=0
             if self.adding_type=="beunding":
-                d=beunding(event.x,event.y,self.number_of_created_objects)
+                d=beunding(self,event.x,event.y,self.number_of_created_objects)
                 self.number_of_created_objects+=1
             else:
-                d=vdev(event.x, event.y,self.number_of_created_objects)
+                d=vdev(self,event.x, event.y,self.number_of_created_objects)
                 self.number_of_created_objects+=1
             self.obj_list.append(d)
             self.c.unbind('<Motion>')
@@ -527,10 +552,15 @@ class App(Frame):
             pickle.dump(i,file)
         file.close()
 
+    def clear_canvas(self):
+        self.c.delete("all")
+        self.create_grid()
+        for obj in self.obj_list:
+            obj.text="" #clear this, since all text is now removed and needs to be re-generated.
+            obj.rect=""
+
     def clear_objects(self):
         self.c.delete("all")
-        for obj in self.obj_list:
-            obj.stop()
         self.obj_list=[]
         self.create_grid()
     def load_setup(self):
@@ -538,6 +568,8 @@ class App(Frame):
         #f= "C:\\Users\\20182653\\Desktop\\TESLAN\\2023-Beun-LANCo\\SyncStream\\Multistream\\Saved setups\\Whoah.pkl"
         if f == '':
             return
+        for obj in self.obj_list:
+            obj.stop()
         self.clear_objects()
         file = open(f, 'rb')
         n_objects = pickle.load(file)
@@ -634,6 +666,10 @@ class App(Frame):
         self.read_properties()
         self.update_vdev_leds()
         self.update_dragdroplist()
+    def move(self):
+        self.moving=1;
+        self.c.bind('<Motion>', self.callback)
+        self.c.pack()
     def adopt_child(self):
 
         new_child = ""
@@ -660,6 +696,10 @@ class App(Frame):
                 obj.Children_objects.append(self.find_object_by_name(obg))
         self.selected_obj.start()
     def makeform(self, dict):
+
+
+
+
         entries = []
         i=0
 
@@ -688,7 +728,7 @@ class App(Frame):
                 ent['values'] = self.groups
             elif field == "Running":
                 ent = Label(row, width=10, text=dict[field], anchor='w')
-            elif field == "Vdev" or field=="Name":
+            elif field == "Vdev" or field=="Name" or field == "Number":
                 ent = Label(row, width=10, text=dict[field], anchor='w')
             elif field == "Invert":
                 ent = Checkbutton(row, text='Invert',variable=sv, onvalue=1, offvalue=0, command=self.write_properties)
@@ -743,10 +783,13 @@ class App(Frame):
             f = Frame(self.master)
             g = Button(f, text="⏵", command=self.start_wrapper,bg='#be0e55', fg='white', width = 4, height=1)
             g2 = Button(f, text="⏹", command=self.selected_obj.stop,bg='#be0e55', fg='white', width = 4, height=1)
+            g3 = Button(f, text="◯", command=self.selected_obj.blank, bg='#be0e55', fg='white', width=4, height=1)
             g['font']=tkFont.Font(family='Arial', size=14)
             g2['font'] = tkFont.Font(family='Arial', size=14)
+            g3['font'] = tkFont.Font(family='Arial', size=14)
             g.pack(side=RIGHT, padx=4)
             g2.pack(side=RIGHT, padx=4)
+            g3.pack(side=RIGHT, padx=4)
             #f.pack()
             if dict['type']=="vdev":
                 f.place(x=610, y=20+445)
@@ -754,6 +797,20 @@ class App(Frame):
                 f.place(x=610, y=20 + 390)
             entries.append((g2, f, None, field))
             i+=1
+        # Move button
+        field="StartStop" #Aka ignore this
+        f = Frame(self.master)
+        ent = Button(f, text="✥", command=self.selected_obj.a.move, bg='#be0e55', fg='white', width=1, height=1)
+        ent['font'] = tkFont.Font(family='Arial', size=14)
+        ent.pack(side=LEFT, padx=2)
+        entries.append((ent, f, None, field))
+        ent = Button(f, text="🗑", command=self.selected_obj.delete_me, bg='#be0e55', fg='white', width=1, height=1)
+        ent['font'] = tkFont.Font(family='Arial', size=14)
+        ent.pack(side=LEFT, padx=2)
+        entries.append((ent, f, None, field))
+        f.pack()
+        f.place(x=750, y=15)
+        i+=1
         return entries
     #c.place(x=10, y=10)
     # load_setup()
@@ -772,7 +829,7 @@ if __name__ == "__main__":
 
 
     while (a.master != "stop"):
-        if a.adding == 1:
+        if a.adding == 1 or a.moving==1:
             if a.temp_square == -1:
                 a.rect = a.c.create_rectangle(0, 0, 0, 0)
             a.temp_square = a.c.coords(a.rect, a.tempx - 10, a.tempy - 10, a.tempx + 10, a.tempy + 10)
@@ -782,6 +839,40 @@ if __name__ == "__main__":
                 a.c.delete(a.rect)
                 a.temp_square = -1
         for obj in a.obj_list:
+            if obj.deleteme==1:
+                obj.deleteme=0
+                if obj.type != "vdev":
+                    msg_box = messagebox.askquestion('Delete object', 'Are you sure you want to delete this object?',
+                                                     icon='warning')
+                    if msg_box == 'yes':
+                        a.deselect_all()
+                        obj.stop()
+                        # Remove object from all Vdevs, from selected objects
+                        for obj2 in a.obj_list:
+                            if obj2.type == "vdev":
+                                if obj.properties['Name'] in obj2.properties['Children']:
+                                    obj2.properties['Children'].remove(obj.properties['Name'])
+                        if obj in a.obj_list:
+                            a.obj_list.remove(obj)
+                        a.clear_canvas()
+
+                else:
+                    msg_box = messagebox.askquestion('Delete object',
+                                                     'Are you sure you want to delete this Vdev? Children will become orphans.',
+                                                     icon='warning')
+                    if msg_box == 'yes':
+                        a.deselect_all()
+                        obj.stop()
+                        # Remove object from all Vdevs, from selected objects
+                        for obg in obj.properties['Children']:
+                            obj.Children_objects.append(a.find_object_by_name(obg))
+                        for obj2 in obj.Children_objects:
+                            obj2.properties['Vdev'] = "None"
+                        if obj in a.obj_list:
+                            a.obj_list.remove(obj)
+                        a.clear_canvas()
+
+
             if obj.rect == "":
                 obj.rect = a.c.create_rectangle(0, 0, 0, 0)
             if obj.text == "":
@@ -808,7 +899,6 @@ if __name__ == "__main__":
                     a.c.itemconfig(obj.text, text=obj.properties['Number'])
             else:
                 if obj.type == "beunding":
-
                     a.c.itemconfig(obj.rect, fill='#FFF')
                     a.c.itemconfig(obj.text, text=obj.properties['Number'])
                 else:
