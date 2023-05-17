@@ -78,8 +78,7 @@ def doNothing(a=1):
 
 
 class beunding:
-    def __init__(self,a, x, y,number_of_created_objects):
-        self.a = a
+    def __init__(self, x, y,number_of_created_objects):
         self.x = x
         self.y = y
         self.type = "beunding"
@@ -153,8 +152,7 @@ class beunding:
 
 
 class vdev:
-    def __init__(self, a,x, y,number_of_created_objects):
-        self.a = a
+    def __init__(self,x, y,number_of_created_objects):
         self.type = "vdev"
         self.x = x
         self.y = y
@@ -505,10 +503,10 @@ class App(Frame):
         if self.adding==1:
             self.adding=0
             if self.adding_type=="beunding":
-                d=beunding(self,event.x,event.y,self.number_of_created_objects)
+                d=beunding(event.x,event.y,self.number_of_created_objects)
                 self.number_of_created_objects+=1
             else:
-                d=vdev(self,event.x, event.y,self.number_of_created_objects)
+                d=vdev(event.x, event.y,self.number_of_created_objects)
                 self.number_of_created_objects+=1
             self.obj_list.append(d)
             self.c.unbind('<Motion>')
@@ -596,10 +594,9 @@ class App(Frame):
         for i in range(n_objects):
             obj=pickle.load(file)
             self.obj_list.append(obj)
-            obj.rect=""
-            obj.text=""
         self.number_of_created_objects=len(self.obj_list)
         file.close()
+        self.clear_canvas()
 
     def exit(self):
         self.master.destroy()
@@ -821,7 +818,7 @@ class App(Frame):
         # Move button
         field="StartStop" #Aka ignore this
         f = Frame(self.master)
-        ent = Button(f, text="✥", command=self.selected_obj.a.move, bg='#be0e55', fg='white', width=1, height=1)
+        ent = Button(f, text="✥", command=self.move, bg='#be0e55', fg='white', width=1, height=1)
         ent['font'] = tkFont.Font(family='Arial', size=14)
         ent.pack(side=LEFT, padx=2)
         entries.append((ent, f, None, field))
