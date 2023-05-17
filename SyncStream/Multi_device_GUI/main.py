@@ -89,7 +89,7 @@ class beunding:
         self.number_of_created_objects = number_of_created_objects
         self.properties['type'] = self.type
         self.properties['Number'] = self.number_of_created_objects + 1
-        self.properties['Name'] = "Thing #" + str(self.number_of_created_objects + 1)
+        self.properties['Name'] = "Thing " + str(self.number_of_created_objects + 1)
         self.properties['IP Address'] = "1.1.1.1"
         self.properties['Port'] = "8888"
         self.properties['MAC Address'] = "FF-FF-FF-FF-FF"
@@ -161,7 +161,7 @@ class vdev:
         self.text = ""
         self.properties['type'] = self.type
         self.properties['Number'] = self.number_of_created_objects + 1
-        self.properties['Name'] = "Vdev" + str(self.number_of_created_objects)
+        self.properties['Name'] = "Vdev " + str(self.number_of_created_objects)
         self.properties['# LEDS'] = 0
         self.previous_animation = "blank"
         self.properties['Group'] = "Default"
@@ -254,6 +254,7 @@ class App(Frame):
         self.menu.add_cascade(label='File', menu=self.filemenu)
         self.filemenu.add_command(label='Save setup', command=self.save_setup)
         self.filemenu.add_command(label='Load setup', command=self.load_setup)
+        self.filemenu.add_command(label='Export to legacy YAML', command=self.export_yaml)
         self.filemenu.add_command(label='---')
         self.filemenu.add_command(label='Exit', command=exit)
 
@@ -581,6 +582,44 @@ class App(Frame):
     def clear_objects(self):
         self.clear_canvas()
         self.obj_list=[]
+    def export_yaml(self):
+        f = filedialog.asksaveasfile(mode='w', defaultextension=".yaml")
+
+        with open(f.name, 'a') as the_file:
+            the_file.write('interfaces:'+'\n')
+            for obj in self.obj_list:
+                if obj.type=="beunding":
+                    if obj.properties['Vdev'] == "None":
+                        #Save here.
+                        the_file.write('  -name: virt-' + str(obj.properties['Name']) + '\n')
+                        the_file.write('   interface-type: virtual' + '\n')
+                        the_file.write('   children: ' + '\n')
+                        the_file.write('    -name: ' + str(obj.properties['Name']) + '\n')
+                        the_file.write('     interface-type: physical'+'\n')
+                        the_file.write('     ip: ' + str(obj.properties['IP Address'])+'\n')
+                        the_file.write('     port: ' + str(obj.properties['Port'])+'\n')
+                        the_file.write('     amount-leds: ' + str(obj.properties['# LEDS'])+'\n')
+                        the_file.write('     max-udp-size: ' + str(obj.properties['Packet length'])+'\n')
+                        the_file.write('     max-brightness: 15'+'\n')
+                else:
+                    the_file.write('  -name: ' + str(obj.properties['Name'])+'\n')
+                    the_file.write('   interface-type: virtual'+'\n')
+                    the_file.write('   children: '+'\n')
+                    parent=obj
+                    for obj in parent.properties['Children']:
+                        obj = a.find_object_by_name(obj)
+                        the_file.write('    -name: ' + str(obj.properties['Name'])+'\n')
+                        the_file.write('     interface-type: physical'+'\n')
+                        the_file.write('     ip: ' + str(obj.properties['IP Address'])+'\n')
+                        the_file.write('     port: ' + str(obj.properties['Port'])+'\n')
+                        the_file.write('     amount-leds: ' + str(obj.properties['# LEDS'])+'\n')
+                        the_file.write('     max-udp-size: ' + str(obj.properties['Packet length'])+'\n')
+                        the_file.write('     max-brightness: 15'+'\n')
+            the_file.write('sockets: ' + str(obj.properties['Name'])+'\n')
+            the_file.write('  dir: /run/syncstream'+'\n')
+
+
+
     def load_setup(self):
         f = filedialog.askopenfilename(defaultextension=".pkl")
         #f= "C:\\Users\\20182653\\Desktop\\TESLAN\\2023-Beun-LANCo\\SyncStream\\Multistream\\Saved setups\\Whoah.pkl"
