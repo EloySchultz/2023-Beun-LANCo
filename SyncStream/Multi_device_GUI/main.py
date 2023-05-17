@@ -86,6 +86,7 @@ class beunding:
         self.previous_animation="blank"
         self.properties = {}
         self.text = ""
+        self.line=""
         self.number_of_created_objects = number_of_created_objects
         self.properties['type'] = self.type
         self.properties['Number'] = self.number_of_created_objects + 1
@@ -173,7 +174,8 @@ class vdev:
         self.BITMULT = int(2 ** 4)
         self.Children_objects=[]
         self.deleteme=0
- 
+        self.line=""
+
         self.properties['Children'] = []
         self.p = None
         self.fb = []
@@ -186,7 +188,7 @@ class vdev:
     def start(self):
 
         #print("Starting thread Vdev")
-        if len(self.Childeren_objects>0):
+        if len(self.Children_objects)>0:
             self.fb = {}
             if self.p != None:
                 self.stop()
@@ -380,12 +382,20 @@ class App(Frame):
                 if (i == "# LEDS" and self.selected_obj.type=="vdev") or i == "type":
                     pass
                 else:
+
                     if i == "Vdev" or i == "Name" or i=="Number" or i== "Running" or i == "Invert":
                         self.selected_obj.properties[i] = self.properties[j][2].get()
                     elif i == "Children":
                         self.selected_obj.properties[i] = list(self.properties[j][0].get(0,10000))
+
+                        for obj in self.obj_list:
+                            if obj.type=="beunding":
+                                if obj.properties['Vdev'] == self.selected_obj.properties['Name']:
+                                    self.c.coords(obj.line, obj.x, obj.y, self.selected_obj.x, self.selected_obj.y)
+
                         j+=1 #Skip the field that is used to add things to list
                         j+=1 #Skip the StartStop field
+
                     else:
                         try:
                             self.selected_obj.properties[i] = self.properties[j][0].get()
@@ -401,9 +411,9 @@ class App(Frame):
     def find_object_by_name(self,name):
         obk = ""
         for obz in self.obj_list:
-            if obz.properties['type'] == "beunding":
-                if obz.properties['Name'] == name:
-                    obk=obz
+            #if obz.properties['type'] == "beunding":
+            if obz.properties['Name'] == name:
+                obk=obz
         if obk == "":
             raise ValueError("Trying to find unexisting object.")
         return obk
@@ -486,6 +496,10 @@ class App(Frame):
             self.moving=0
             self.selected_obj.x = event.x
             self.selected_obj.y = event.y
+            if self.selected_obj.type=="beunding":
+                if self.selected_obj.properties['Vdev'] != "None":
+                    obj = self.find_object_by_name(self.selected_obj.properties['Vdev'])
+                    self.c.coords(self.selected_obj.line,self.selected_obj.x, self.selected_obj.y, obj.x, obj.y)
             self.c.unbind('<Motion>')
             self.c.pack()
         if self.adding==1:
@@ -558,11 +572,17 @@ class App(Frame):
         for obj in self.obj_list:
             obj.text="" #clear this, since all text is now removed and needs to be re-generated.
             obj.rect=""
+            obj.line=self.c.create_line(0,0,0,0,width= 3)
+
+
+            if obj.type=="beunding":
+                if obj.properties['Vdev'] != "None":
+                    obj2 = self.find_object_by_name(obj.properties['Vdev'])
+                    self.c.coords(obj.line,obj.x, obj.y, obj2.x, obj2.y)
 
     def clear_objects(self):
-        self.c.delete("all")
+        self.clear_canvas()
         self.obj_list=[]
-        self.create_grid()
     def load_setup(self):
         f = filedialog.askopenfilename(defaultextension=".pkl")
         #f= "C:\\Users\\20182653\\Desktop\\TESLAN\\2023-Beun-LANCo\\SyncStream\\Multistream\\Saved setups\\Whoah.pkl"
@@ -663,6 +683,7 @@ class App(Frame):
                 self.selected_obj.properties['Children'].remove(new_child)
                 chld = self.find_object_by_name(new_child)
                 chld.properties["Vdev"] = "None"
+                self.c.coords(chld.line,0,0,0,0)
         self.read_properties()
         self.update_vdev_leds()
         self.update_dragdroplist()
@@ -878,6 +899,8 @@ if __name__ == "__main__":
             if obj.text == "":
                 obj.text = a.c.create_text(obj.x, obj.y, text=obj.properties['Number'], fill="black",
                                               font=('Helvetica 12 bold'))
+            if obj.line=="":
+                obj.line= a.c.create_line(0, 0, 0, 0,width=3)
             if obj.selected == False:
                 if obj.type == "beunding":
                     if obj.properties['Vdev'] == "None":
@@ -894,8 +917,14 @@ if __name__ == "__main__":
                 else:
                     if obj.properties["Running"] == "No":
                         a.c.itemconfig(obj.rect, fill='#fc9088')
+                        for child in obj.properties['Children']:
+                            child=a.find_object_by_name(child)
+                            a.c.itemconfig(child.line, fill="red")
                     else:
                         a.c.itemconfig(obj.rect, fill='#88fca3')
+                        for child in obj.properties['Children']:
+                            child=a.find_object_by_name(child)
+                            a.c.itemconfig(child.line, fill="green")
                     a.c.itemconfig(obj.text, text=obj.properties['Number'])
             else:
                 if obj.type == "beunding":
@@ -904,10 +933,22 @@ if __name__ == "__main__":
                 else:
                     a.c.itemconfig(obj.rect, fill='#FFF')
                     a.c.itemconfig(obj.text, text=obj.properties['Number'])
+                    if obj.properties["Running"] == "Yes":
+                        for child in obj.properties['Children']:
+                            child=a.find_object_by_name(child)
+                            a.c.itemconfig(child.line, fill="green")
+                    else:
+                        for child in obj.properties['Children']:
+                            child=a.find_object_by_name(child)
+                            a.c.itemconfig(child.line, fill="red")
             if obj.type == "beunding":
                 a.c.coords(obj.rect, obj.x - 10, obj.y - 10, obj.x + 10, obj.y + 10)
+                a.c.lift(obj.rect)
+                a.c.lift(obj.text)
             else:
                 a.c.coords(obj.rect, obj.x - 14, obj.y - 14, obj.x + 14, obj.y + 14)
+                a.c.lift(obj.rect)
+                a.c.lift(obj.text)
         a.read_properties()
         # write_properties()
         a.op2['values'] = a.groups
