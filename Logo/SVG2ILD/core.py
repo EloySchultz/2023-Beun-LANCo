@@ -547,7 +547,7 @@ class SVGPath(object):
 			d2 = self.arc_deriv(rx, ry, phi, sw1+sdw)
 			p1 = p0[0] + a*d1[0], p0[1] + a*d1[1]
 			p2 = p3[0] - a*d2[0], p3[1] - a*d2[1]
-			beziers.append(PathBezier4(p0, p1, p2, p3))
+			beziers.append(PathBezier4(p0, p1, p2, p3,self.color))
 		return beziers
 	def svg_arc_to_beziers(self, start, end, rx, ry, phi, fa, fs):
 		# first convert endpoint format to center-and-radii format
@@ -930,7 +930,7 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			name,rest = t.split("(")
 			if rest[-1] != ")":
 				raise ValueError("Invalid SVG transform expression: %r (%r)"%(data,rest))
-			args = list(map(float,re.split(r' ',rest[:-1])))
+			args = list(map(float,re.split(r',',rest[:-1])))
 			if name == 'matrix':
 				mat = self.mmul(mat, args)
 			elif name == 'translate':
@@ -965,6 +965,14 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			path.transform(self.ts)
 			frame.add(path)
 	def addPolyline(self, data,color,frame,close=False):
+		q = data.split(" ")
+		if (q[0]!=q[-2]): #Open path, but I think all paths should be closed so lets close it.
+			m=""
+			for i in q:
+				m = m + str(i + " ")
+			m = m + str(q[0] + " ")
+		data=m
+		print(m)
 		p = SVGPolyline(data, close,color)
 		for path in p.subpaths:
 			path.transform(self.ts)
