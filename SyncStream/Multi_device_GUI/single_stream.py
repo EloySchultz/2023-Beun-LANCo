@@ -25,12 +25,19 @@ class beunding_streamer:
             r, g, b = a[0]
         else:
             r, g, b = a
+        r=int(r)
+        g=int(g)
+        b=int(b)
 
         if index > self.MAX_INDEX:
             raise ValueError
         else:
             ir, il = index % self.BITMULT, index // self.BITMULT
-
+        # print(il)
+        # print(ir)
+        # print(r)
+        # print(g)
+        # print(b)
         b = bytes([il,
                    ir * self.BITMULT + r,
                    g * self.BITMULT + b])
@@ -69,6 +76,9 @@ class vdev_streamer:
             r, g, b = a[0]
         else:
             r, g, b = a
+        r = int(r)
+        g = int(g)
+        b = int(b)
         if invert==1:
             index = N - index -1
 
