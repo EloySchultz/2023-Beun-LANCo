@@ -11,6 +11,7 @@ from PIL import ImageTk, Image
 import PIL
 import tkinter.filedialog
 from tkinter import ttk #Somehow we need this imported seperately
+from tkinter import colorchooser
 import numpy as np
 from tkinter import *
 from tkinter import font as tkFont  # for convenience
@@ -99,6 +100,7 @@ class beunding:
         self.properties['Group'] = "Default"
         self.properties['Vdev'] = "None"
         self.properties['Animation'] = "blank"
+        self.properties['Color'] = (0,0,0)
         self.properties['Running'] = "No"
         self.p = None
         self.selected = False
@@ -128,6 +130,7 @@ class beunding:
 
             self.p = Process(target=single_stream, args=(self.properties['# LEDS'],
                                                          self.properties['Animation'],
+                                                         self.properties['Color'],
                                                          self.properties["Invert"],
                                                          self.IP,
                                                          self.PORT,
@@ -166,6 +169,7 @@ class vdev:
         self.previous_animation = "blank"
         self.properties['Group'] = "Default"
         self.properties['Animation'] = "blank"
+        self.properties['Color'] = (0, 0, 0)
         self.properties['Running'] = "No"
         self.PACKET_LENGTH = 320
         self.MAX_INDEX = 4095
@@ -202,6 +206,7 @@ class vdev:
 
             self.p = Process(target=vdev_stream, args=(self.properties["# LEDS"],
                                                        self.properties['Animation'],
+                                                       self.properties['Color'],
                                                        child_ips,
                                                        child_ports,
                                                        child_leds,
@@ -342,6 +347,24 @@ class App(Frame):
         self.c.pack(side=TOP, anchor=NW)
         self.create_grid()
 
+    def choose_color(self):
+
+        # variable to store hexadecimal code of color
+        color_code = colorchooser.askcolor(title ="Choose color")
+        if color_code[0]==None:
+            return
+        print(color_code)
+        color=color_code[0]
+        print(color)
+        color= tuple(int(x/255*15) for x in color) #int(255/x*15)
+        print(color)
+        if sum(color)/3 > 10:
+            messagebox.showinfo("Eyy", "That color has an average value of above 10, which will induce much current (things are more likely to catch fire lol). Maybe you want to reconsider your choice?")
+        self.selected_obj.properties['Color'] = color
+        self.read_properties()
+        #return color
+
+
     def check_input(self,event,lst,box): #For animation autofill
         value = event.widget.get()
 
@@ -395,7 +418,7 @@ class App(Frame):
                         j+=1 #Skip the field that is used to add things to list
                         j+=1 #Skip the StartStop field
 
-                    else:
+                    elif i != "Color":
                         try:
                             self.selected_obj.properties[i] = self.properties[j][0].get()
                         except:
@@ -457,7 +480,14 @@ class App(Frame):
                     if i == j[3]:
                         if i == "StartStop":
                             pass
-                        if isinstance(j[0],Label):
+                        if i=="Color":
+                            col = tuple(int(x / 15 * 255) for x in self.selected_obj.properties['Color'])
+                            col = '#%02x%02x%02x' % col
+                            if sum(self.selected_obj.properties['Color'])/3<6:
+                                j[0].config(text=self.selected_obj.properties[i], fg = "#FFFFFF", bg = col)
+                            else:
+                                j[0].config(text=self.selected_obj.properties[i], fg="#000000", bg=col)
+                        elif isinstance(j[0],Label):
                             j[0].config(text=self.selected_obj.properties[i])
                             if j[-1] == "Running":
                                 if self.selected_obj.properties[i]=="Yes":
@@ -787,6 +817,8 @@ class App(Frame):
                 ent = Label(row, width=10, text=dict[field], anchor='w')
             elif field == "Vdev" or field=="Name" or field == "Number":
                 ent = Label(row, width=10, text=dict[field], anchor='w')
+            elif field == "Color":
+                ent = Button(row, text="Select color", command=self.choose_color)
             elif field == "Invert":
                 ent = Checkbutton(row, text='Invert',variable=sv, onvalue=1, offvalue=0, command=self.write_properties)
             elif field == "Children":
@@ -851,7 +883,7 @@ class App(Frame):
             if dict['type']=="vdev":
                 f.place(x=610, y=20+445)
             else:
-                f.place(x=610, y=20 + 390)
+                f.place(x=610, y=20 + 420)
             entries.append((g2, f, None, field))
             i+=1
         # Move button

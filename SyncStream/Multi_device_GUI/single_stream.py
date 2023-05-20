@@ -105,7 +105,7 @@ class vdev_streamer:
 
         self.fb={}
     pass
-def single_stream(N, animation_name,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
+def single_stream(N, animation_name,color,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH):
     #global obj_list
     N = int(N)
     beunding = beunding_streamer(N,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_LENGTH)
@@ -116,10 +116,10 @@ def single_stream(N, animation_name,invert,IP, PORT, MAX_INDEX, BITMULT, PACKET_
             animation = getattr(animation_class, animation_name)
         else:
             raise ValueError("Animation " + str(animation_name) + " does not exist")
-        animation(beunding, N, duration = 1000)
-        enabled=0
+        animation(beunding, N, duration = 200000, colour=color) #American to bri'ish converter
+        enabled=0 #dit meot voor blank
 
-def vdev_stream(N, animation_name,child_ips,child_ports,child_leds,child_inverts,MAX_INDEX, BITMULT, PACKET_LENGTH):
+def vdev_stream(N, animation_name,color, child_ips,child_ports,child_leds,child_inverts,MAX_INDEX, BITMULT, PACKET_LENGTH):
     #global obj_list
     N = int(N)
     beunding = vdev_streamer(child_ips,child_ports,child_leds,child_inverts,MAX_INDEX, BITMULT, PACKET_LENGTH)
@@ -127,5 +127,5 @@ def vdev_stream(N, animation_name,child_ips,child_ports,child_leds,child_inverts
     while(enabled):  #Hier moet iets komen zodat je animaties wel/niet kan loopen
         #animation_name = beunding.properties['Animation']
         animation = getattr(animation_class, animation_name)
-        animation(beunding, N, duration = 1000)
+        animation(beunding, N, duration = 200000, colour=color)  #American to bri'ish converter
         enabled=0
