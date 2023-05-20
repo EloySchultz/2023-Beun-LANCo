@@ -36,8 +36,10 @@ We have 6 ATX PSU's that have been wired to just output 5V. On these PSUs, the g
 # 2. LEDbeams Crew-area
 The crew-area is usually a U-shaped group of tables that is seperated from the rest of the LAN. This area hosts the most valuable people at the LAN, soooo we gotta accentuate that with some LEDs of course! To achieve this, the LANCo owns 10 beams of 1.8 meters that have 60 leds/m WS2812b LED strips attatched. There are 106 LEDs per beam (although this is slightly different for some damaged LEDbeams). Each LEDbeam has a 3-pin JST-female connector at the input and a 3pin JST-male connector at the output (at I hope to solder this like this this year). We highly recommend to NOT chain more than 2 LEDbeams per PSU due to current losses in the LEDstrips. 
 
-[Insert picture of wiring here]
-The controllers of the LEDbeams will have a similar architecture to those of the seinpalen, except that the arduino+wiznet is replaced by an ESP8266. This means that the ledbeam controllers will receive their packets over wifi instead. 
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/4ca987e2-1cc2-42c6-80d7-1bf7fa666d44)
+
+The idea is that the powersupply is in the center of two beams, thus creating minimal in-strip resistive losses. For controllers, we simply use ESP8266 nodeMCU V3 boards with a JST-SM male connector attached to it. This controller hangs on the input side of the beams, and will receive power through the rails of the ledstrip. 
+
 
 On the ESP8266, the same code in the folder Arduino_esp_code/ is used. Make sure to switch to the correct device in the arduino IDE before uploading.
 
