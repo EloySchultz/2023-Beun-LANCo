@@ -269,9 +269,10 @@ class App(Frame):
         self.addmenu.add_command(label='Add virtual device', command=self.add_vdev)
 
         self.helpmenu = Menu(self.menu, tearoff=0)
-        self.menu.add_cascade(label='Help', menu=self.helpmenu)
-        self.helpmenu.add_command(label='About')
-
+        self.menu.add_cascade(label='Credits', menu=self.helpmenu)
+        self.helpmenu.add_command(label='Eloy Schultz | Eloy')
+        self.helpmenu.add_command(label='Max Winsemius | Hernivo')
+        self.helpmenu.add_command(label='Mathijs Verhaegh | Ostheer')
         self.c = Canvas(self.master, width=600, height=400, bd=2, relief='ridge')
 
         # if adding c.coords(rect, x - 10, y - 10, x + 10, y + 10)
