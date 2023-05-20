@@ -1,7 +1,7 @@
 from UDPStreamer import beunding
 from time import sleep
 from animations import regenboog, sinus, set_colour, linerider, red_flame, blue_flame, green_flame, pink_flame, yellow_flame,white_flame, vertical_rainbow, red_flame_old, show_text
-paal = beunding("192.168.2.152", 8888, 320, 4095)
+paal = beunding("192.168.2.157", 8888, 320, 4095)
 
 
 #Seinpaal has 300 LEDs
@@ -21,9 +21,10 @@ paal = beunding("192.168.2.152", 8888, 320, 4095)
 #red_flame(paal, 300, duration=30, dt=0.02)
 #vertical_rainbow(paal, 300, duration=300, dt=0.02, brightness=0.1)
 while(1):
-    regenboog(paal, 300, speed=1,duration=5, brightness=0.3)
-    show_text(paal, 300,string="WELCOME TO THE TESLAN!",duration=1, dt=0.1,colour=(2,0,2))
-    red_flame(paal, 300, duration=5, dt=0.02)
+    set_colour(paal, 106, colour = (0,0,0))
+    #regenboog(paal, 106, speed=1,duration=5, brightness=0.3)
+    #show_text(paal, 300,string="WELCOME TO THE TESLAN!",duration=1, dt=0.1,colour=(2,0,2))
+    #red_flame(paal, 300, duration=5, dt=0.02)
     #linerider(paal, 300, 3,duration=5, dt=0.02, colour = (3,0,1))
     #vertical_rainbow(paal, 300, duration=5, dt=0.02, brightness=0.3, speed=1)
     #
