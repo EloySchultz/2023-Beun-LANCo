@@ -1,6 +1,6 @@
 
 from pprint import pprint
-
+import string
 import random
 import time
 import random
@@ -83,6 +83,7 @@ class beunding:
         self.x = x
         self.y = y
         self.type = "beunding"
+        self.sweephash=""
         self.previous_animation="blank"
         self.properties = {}
         self.text = ""
@@ -160,6 +161,7 @@ class vdev:
         self.x = x
         self.y = y
         self.properties = {}
+        self.sweephash=''
         self.number_of_created_objects=number_of_created_objects
         self.text = ""
         self.properties['type'] = self.type
@@ -239,6 +241,7 @@ class App(Frame):
         self.properties = []
         self.obj_list = []
         self.tempx = 0
+        self.group_mode="instant"
         self.tempy = 0
         self.selected_obj = None
         self.temp_square = -1
@@ -262,6 +265,7 @@ class App(Frame):
         self.filemenu.add_command(label='Export to legacy YAML', command=self.export_yaml)
         self.filemenu.add_command(label='---')
         self.filemenu.add_command(label='Exit', command=exit)
+        self.sweeping=0;
 
         self.addmenu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='Add', menu=self.addmenu)
@@ -294,42 +298,77 @@ class App(Frame):
 
         # groups
         self.gframe = Frame(self.master, highlightbackground="#bababa", highlightthickness=1)
-        self.f0 = Frame(self.gframe)
+        self.f0 = self.gframe#Frame(self.gframe)
         self.lb1 = Label(self.f0, width=15, text="Groups", anchor='center')
-        self.f1 = Frame(self.gframe)
-        self.op1 = Entry(self.f1, width=15)
+        self.f1 = self.gframe#Frame(self.gframe)
+        self.op1 = Entry(self.f1, width=14)
         # op.insert(0, dict[field])
         self.bt1 = Button(self.f1, text="Add group", command=self.add_group)
-        self.f2 = Frame(self.gframe)
+        self.f2 = self.gframe#Frame(self.gframe)
         self.op2 = ttk.Combobox(self.f2, state="readonly", width=11, justify=LEFT)
         self.op2['values'] = self.groups
         self.bt2 = Button(self.f2, text="Delete group", command=self.remove_group)
-        self.f3 = Frame(self.gframe)
-        self.lb2 = Label(self.f3, width=15, text="With", anchor='w')
+        self.f3 = self.gframe#Frame(self.gframe)
+        self.lb2 = Label(self.f3, width=10, text="With", anchor='w')
         self.op3 = ttk.Combobox(self.f3, state="readonly", width=11)
         self.op3['values'] = self.groups
-        self.f5 = Frame(self.gframe)
-        self.lb3 = Label(self.f5, width=15, text="set animation", anchor='w')
+        self.op3.set(value="Default")
+        self.f5 = self.gframe#Frame(self.gframe)
+        self.lb3 = Label(self.f5, width=10, text="Set animation", anchor='w')
         self.op4 = ttk.Combobox(self.f5, state="readonly", width=11)
+        self.bt3 = Button(self.f5, text="Set animation", command=self.set_group)
         self.op4['values'] = self.animations
-        self.f6 = Frame(self.gframe)
-        self.bt3 = Button(self.f6, text="Apply and run", command=self.set_group)
-        self.lb1.pack()
-        self.f0.pack()
-        self.op1.pack(side=LEFT)
-        self.bt1.pack(side=LEFT)
-        self.f1.pack()
-        self.op2.pack(side=LEFT)
-        self.bt2.pack(side=LEFT)
-        self.f2.pack()
-        self.lb2.pack(side=LEFT)
-        self.op3.pack(side=LEFT)
-        self.f3.pack(pady=(20, 0))
-        self.lb3.pack(side=LEFT)
-        self.op4.pack(side=LEFT)
-        self.f5.pack()
-        self.bt3.pack()
-        self.f6.pack()
+        self.f6 = self.gframe#Frame(self.gframe)
+        self.lb4 = Label(self.f6, width=10, text="Act. direction", anchor='w')
+        self.op5 = ttk.Combobox(self.f6, state="readonly", width=11)
+        self.op5['values'] = ["instant","E","W","N","S","NW","SW","NE","SE"] #en miss meer
+        self.op5.set(value="instant")
+        self.f7 = self.gframe#Frame(self.gframe)
+        self.lb5 = Label(self.f7, width=10, text="Act. speed", anchor='w')
+        self.op6 = Entry(self.f7, width=14)
+        self.op6.insert(0,"1")
+        self.bt5 = Button(self.f7, text="Activate group", command=self.run_group)
+        self.bt4 = Button(self.f7, text="Blank group", command=self.blank_group)
+        self.lb1.grid(row=0,column=1)
+        self.op1.grid(row=1,column=1)
+        self.bt1.grid(row=1,column=2,sticky=W)
+        self.op2.grid(row=2,column=1)
+        self.bt2.grid(row=2,column=2,sticky=W)
+        self.lb2.grid(row=3,column=0)
+
+        self.op3.grid(row=3,column=1)
+        self.lb3.grid(row=4,column=0)
+        self.op4.grid(row=4, column=1) #= ttk.Combobox(self.f5, state="readonly", width=11)
+        self.bt3.grid(row=4,column=2,sticky=W)
+        self.lb4.grid(row=5,column=0) #= Label(self.f6, width=10, text="Activation", anchor='w')
+        self.op5.grid(row=5,column=1)# = ttk.Combobox(self.f6, state="readonly", width=3)
+        self.bt4.grid(row=5, column=2,sticky=W)
+        self.lb5.grid(row=6,column=0)# = Label(self.f7, width=10, text="Act. speed", anchor='w')
+        self.op6.grid(row=6,column=1)# = Entry(self.f7, width=2)
+        self.bt5.grid(row=6,column=2,sticky=W)
+        # self.lb1.pack()
+        # self.f0.pack()
+        # self.op1.pack(side=LEFT)
+        # self.bt1.pack(side=LEFT)
+        # self.f1.pack()
+        # self.op2.pack(side=LEFT)
+        # self.bt2.pack(side=LEFT)
+        # self.f2.pack()
+        # self.lb2.pack(side=LEFT)
+        # self.op3.pack(side=LEFT, padx=(0,60))
+        # self.f3.pack(pady=(2, 0))
+        # self.lb3.pack(side=LEFT)
+        # self.op4.pack(side=LEFT, padx=(0,10))
+        # self.bt3.pack(side=LEFT, padx=5)
+        # self.f5.pack()
+        # self.lb4.pack(side=LEFT)
+        # self.op5.pack(side=LEFT, padx=(0))
+        # #self.bt4.pack(side=LEFT,padx=5)
+        # self.f6.pack()
+        # self.lb5.pack(side=LEFT)
+        # self.op6.pack(side=LEFT, padx=(0, 10))
+        # self.bt4.pack(side=LEFT, padx=5)
+        # self.f7.pack()
 
         self.gframe.pack()
         self.gframe.place(x=150, y=420)
@@ -556,6 +595,7 @@ class App(Frame):
 
 
     def run_all(self):
+        self.sweeping=0
         self.deselect_all()
         for obj in self.obj_list:
             if "Vdev" in obj.properties.keys() and obj.properties["Vdev"] != "None":
@@ -569,6 +609,7 @@ class App(Frame):
                 obj.start()
 
     def blank_all(self):
+        self.sweeping=0
         self.deselect_all()
         for obj in self.obj_list:
             if "Vdev" in obj.properties.keys() and obj.properties["Vdev"] != "None":
@@ -716,8 +757,40 @@ class App(Frame):
             self.deselect_all()
             for obj in self.obj_list:
                 if obj.properties['Group'] == self.op3.get():
-                    obj.stop()
                     obj.properties['Animation'] = self.op4.get()
+            self.op4.set("")
+        else:
+            messagebox.showinfo("Eyy", "Please select an animation first.")
+
+    def blank_group(self):
+        self.sweeping=0
+        self.deselect_all()
+        for obj in self.obj_list:
+            if obj.properties['Group'] == self.op3.get():
+                obj.stop()
+                if "Vdev" in obj.properties.keys():
+                    if obj.properties['Vdev'] == "None":
+                        obj.previous_animation=obj.properties['Animation']
+                        obj.properties['Animation'] = "blank"
+                        obj.start()
+                        obj.properties['Animation'] = obj.previous_animation
+                else:
+                    if obj.properties['type'] == "vdev":
+                        obj.Children_objects = []
+                        for obg in obj.properties['Children']:
+                            obj.Children_objects.append(self.find_object_by_name(obg))
+                    obj.previous_animation = obj.properties['Animation']
+                    obj.properties['Animation'] = "blank"
+                    obj.start()
+                    obj.properties['Animation'] = obj.previous_animation
+    def run_group(self):
+        self.group_mode=self.op5.get()
+        if self.group_mode=="instant":
+            self.write_properties()
+            self.deselect_all()
+            for obj in self.obj_list:
+                if obj.properties['Group'] == self.op3.get():
+                    obj.stop()
                     if "Vdev" in obj.properties.keys():
                         if obj.properties['Vdev'] == "None":
                             obj.start()
@@ -727,10 +800,11 @@ class App(Frame):
                             for obg in obj.properties['Children']:
                                 obj.Children_objects.append(self.find_object_by_name(obg))
                         obj.start()
-            self.op4.set("")
         else:
-            messagebox.showinfo("Eyy", "Please select an animation first.")
-        #op3.set("")
+            self.sweeping=1
+            self.sweephash=''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            self.sweep_treshold=0;
+            #Need to do a sweep.
 
 
 
@@ -961,6 +1035,29 @@ if __name__ == "__main__":
                         if obj in a.obj_list:
                             a.obj_list.remove(obj)
                         a.clear_canvas()
+
+            if a.sweeping==1:
+                if a.group_mode=="instant":
+                    a.sweeping=0;
+                    print("An exception occurred")
+                z=0
+                q=0
+                if "N" in a.group_mode:
+                    z=z+obj.y
+                if "S" in a.group_mode:
+                    z=z-obj.y
+                    q=q-400
+                if "W" in a.group_mode:
+                    z=z+obj.x
+                if "E" in a.group_mode:
+                    z=z-obj.x
+                    q=q-600
+                if z<a.sweep_treshold+q:
+                    if not obj.sweephash == a.sweephash:
+                        obj.start()
+                        obj.sweephash=a.sweephash
+                if a.sweep_treshold<2000:
+                    a.sweep_treshold+=float(a.op6.get())
 
 
             if obj.rect == "":
