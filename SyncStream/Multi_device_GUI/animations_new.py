@@ -68,7 +68,7 @@ class c_animations():
             self.wiper(beunding, N, speed=1, duration=10)
             self.wiper(beunding, N, speed=0.5, duration=10, colour=(10,0,8))
             self.wiper(beunding, N, speed=0.5, duration=10, colour=(2,3,7))
-    def regenboog(self,beunding, N, speed=1, dt=0.02,brightness = 0.7, duration=30):
+    def regenboog(self,beunding, N, speed=1, dt=0.02,brightness = 0.7, duration=30, colour=(0,0,0)):
         Nsteps = int(duration//dt)
 
         buffer = [(x*1.0/N, 1, 1) for x in range(N)]
@@ -239,8 +239,9 @@ class c_animations():
             self.send_buffer(beunding,buffer)
             time.sleep(dt)
 
-        for k in range(0,1000,100):
+        for k in range(0,1100,100):
             #print(k)
+            k=min(1000,k)
             for i in range(N):
                 buffer[i] = tuple(x*(1000-k)/1000 for x in colour)
             self.send_buffer(beunding, buffer)
@@ -471,7 +472,7 @@ class c_animations():
     #     self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
 
         
-    def vertical_rainbow(self,beunding, N, speed=1, dt = 0.02, duration = 30, brightness=0.6):
+    def vertical_rainbow(self,beunding, N, speed=1, dt = 0.02, duration = 30, brightness=0.6, colour=(0,0,0)):
         Nsteps = int(duration//dt)
         offset=0;
         hsv2rgb = lambda h,s,v: tuple(int(x * 15) for x in colorsys.hsv_to_rgb(h,s,v))
