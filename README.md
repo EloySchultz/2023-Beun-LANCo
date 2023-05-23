@@ -29,6 +29,11 @@ When booting a microcontroller with this code, there is a simple LED debug indic
 | Red        | Init complete, but no connection: Can be because IP conflicts, network cable disconnected, incorrect credentials |
 | Green      | All good: Device has IP and is ready to receive packets                                                          |
 
+
+If a beundevice ring color is flickering between green and red, this is either because of 
+- a voltage spike on the PSU. This is a common issue with ATX powersupplies right after you connect them to mains voltage. Let it sit for 30 seconds, it should stabilize.
+- a UDP package that is received that addresses memory that is not reserved. This usually happens when the number of LEDs in the Arduino code is smaller than the number of LEDs you are sending in SyncStream. It can also happen if you have a mismatch in packet length (320 should be good for this).
+
 ## ATX powersupplies:
 We have 6 ATX PSU's that have been wired to just output 5V. On these PSUs, the green wire (PSU-ON) is wired to ground such that the power supplies are always on. Each power supply has at least 3 conductors going from the 5V rail to a WAGO clip. The WAGO clips are supposed to be permanently attached to the PSUs, as it can be a pain to squeeze the wires in the WAGO clips. All other wires are tucked to the inside of the powersupplies and isolated per rail with isolation tape. 
 
