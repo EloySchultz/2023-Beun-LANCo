@@ -172,6 +172,7 @@ class vdev:
         self.properties['Group'] = "Default"
         self.properties['Animation'] = "blank"
         self.properties['Color'] = (0, 0, 0)
+        self.properties['Sequential'] = True
         self.properties['Running'] = "No"
         self.PACKET_LENGTH = 320
         self.MAX_INDEX = 4095
@@ -190,7 +191,6 @@ class vdev:
         self.deleteme=1
 
     def start(self):
-
         #print("Starting thread Vdev")
         if len(self.Children_objects)>0:
             self.fb = {}
@@ -206,7 +206,8 @@ class vdev:
                 child_leds.append(int(obj.properties['# LEDS']))
                 child_inverts.append(int(obj.properties['Invert']))
 
-            self.p = Process(target=vdev_stream, args=(self.properties["# LEDS"],
+            self.p = Process(target=vdev_stream, args=(self.properties['Sequential'],
+                                                       self.properties["# LEDS"],
                                                        self.properties['Animation'],
                                                        self.properties['Color'],
                                                        child_ips,
@@ -218,7 +219,6 @@ class vdev:
                                                        self.PACKET_LENGTH))
             self.p.daemon = True
             self.p.start()
-
 
     def stop(self):
         if self.p!=None:
@@ -381,7 +381,7 @@ class App(Frame):
         self.img = ImageTk.PhotoImage(self.im)
         self.label = Label(self.frame, image=self.img)
         self.label.pack()
-        self.frame.place(x=700, y=550)
+        self.frame.place(x=700, y=552)
 
         self.c.bind("<Button-1>", self.key)
         self.c.pack(side=TOP, anchor=NW)
@@ -445,7 +445,7 @@ class App(Frame):
                     pass
                 else:
 
-                    if i == "Vdev" or i == "Name" or i=="Number" or i== "Running" or i == "Invert":
+                    if i == "Vdev" or i == "Name" or i=="Number" or i== "Running" or i == "Invert" or i == "Sequential":
                         self.selected_obj.properties[i] = self.properties[j][2].get()
                     elif i == "Children":
                         self.selected_obj.properties[i] = list(self.properties[j][0].get(0,10000))
@@ -894,8 +894,8 @@ class App(Frame):
                 ent = Label(row, width=10, text=dict[field], anchor='w')
             elif field == "Color":
                 ent = Button(row, text="Select color", command=self.choose_color)
-            elif field == "Invert":
-                ent = Checkbutton(row, text='Invert',variable=sv, onvalue=1, offvalue=0, command=self.write_properties)
+            elif field == "Invert" or field== "Sequential":
+                ent = Checkbutton(row, text=field,variable=sv, onvalue=1, offvalue=0, command=self.write_properties)
             elif field == "Children":
 
                 m = Frame(self.master)
@@ -924,7 +924,7 @@ class App(Frame):
                     butt.pack(side=LEFT)
                     butt2.pack(side=LEFT)
                     entries.append((child_select, k, sv,"Child_select"))
-                m.place(x=610, y=20 + 210)
+                m.place(x=610, y=20 + 265)
 
                 packed=1
             else:
@@ -956,7 +956,7 @@ class App(Frame):
             g3.pack(side=RIGHT, padx=4)
             #f.pack()
             if dict['type']=="vdev":
-                f.place(x=610, y=20+445)
+                f.place(x=610, y=20+490)
             else:
                 f.place(x=610, y=20 + 420)
             entries.append((g2, f, None, field))
