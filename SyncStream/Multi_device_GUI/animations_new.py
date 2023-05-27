@@ -28,8 +28,11 @@ class c_animations():
             'Y': [[1, 1, 1, 0, 1], [0, 0, 1, 0, 1], [1, 1, 1, 1, 0]],
             'I': [[1, 0, 0, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 0, 1]],
             'K': [[1, 1, 1, 1, 1], [0, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 0, 0, 0, 1]],
+            'R': [[1, 1, 1, 1, 1], [1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [0, 0, 0, 0, 1]],
+            'B': [[1, 1, 1, 1, 1], [1, 0, 1, 0, 1], [0, 1, 0, 1, 0]],
             'V': [[1, 1, 1, 1, 0], [0, 0, 0, 0, 1], [1, 1, 1, 1, 0]],
             'U': [[1, 1, 1, 1, 1], [0, 0, 0, 0, 1], [1, 1, 1, 1, 1]]}
+
         pass
         
 
@@ -68,7 +71,7 @@ class c_animations():
             self.wiper(beunding, N, speed=1, duration=10)
             self.wiper(beunding, N, speed=0.5, duration=10, colour=(10,0,8))
             self.wiper(beunding, N, speed=0.5, duration=10, colour=(2,3,7))
-    def regenboog(self,beunding, N, speed=1, dt=0.02,brightness = 0.7, duration=30, colour=(0,0,0)):
+    def regenboog(self,beunding, N, speed=1, dt=0.02,brightness = 0.3, duration=30, colour=(0,0,0)):
         Nsteps = int(duration//dt)
 
         buffer = [(x*1.0/N, 1, 1) for x in range(N)]
@@ -256,7 +259,7 @@ class c_animations():
                 beunding.setLed(i,colour)
             beunding.send()
             time.sleep(dt)
-    def snake(self,beunding, N, speed=1, dt=0.001, duration=30, colour=(1,6,3)):
+    def snake(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(1,6,3)):
         t1 = time.time()
         snake_index=0;
         direction = 1;
@@ -337,11 +340,14 @@ class c_animations():
             rgb=1
         else:
             rgb=0
+            if sum(colour)/3>5:
+                colour=tuple(x/3 for x in colour)
+            mcol=colour
         if rgb == 1:
             colour = hsv2rgb(0 * dt / 60, 1, 1)
             mcol = tuple(0.5*x for x in colour)
 
-        self.wipe_and_fade(beunding, N, speed=1, dt=0.02, duration=30, colour=colour)
+        self.wipe_and_fade(beunding, N, speed=1, dt=0.02, duration=30, colour=mcol)
 
 
 
@@ -391,6 +397,7 @@ class c_animations():
             self.send_buffer(beunding,buffer)
             sleep(dt)
     def green(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(0,1,0)):
+        colour=(0,1,0)
         self.set_colour(beunding, N, speed, dt, duration, colour=colour)
     def set_colour(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(0,0,0)):
         for i in range(N):
@@ -484,7 +491,7 @@ class c_animations():
             sleep(dt)
             
 
-    def show_text(self,beunding, N, string="WELCOME TO THE TESLAN!", dt = 0.1, duration = 30, colour = (1,1,1)):
+    def show_text(self,beunding, N, string="BEUN!", dt = 0.1, duration = 30, colour = (1,1,1)):
         #duration = how many times to repeat
         repeated=0
         font=self.font
