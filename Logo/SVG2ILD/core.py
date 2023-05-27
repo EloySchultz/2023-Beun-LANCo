@@ -104,15 +104,12 @@ def pc(c):
 
 class RenderParameters(object):
 	def __init__(self):
-		# output sample rate
-		self.rate = 48000
-		# time to display (seconds)
 		# use 0.0 for a single frame
 		self.time = 0.0
 		# step size of galvo movement, in fractions of output size per sample (2=full width)
-		self.on_speed = 2/30.0   #2/90
+		self.on_speed = 2 / 30.0
 		# same, but for "off" laser state
-		self.off_speed = 2/10.0  #2/20
+		self.off_speed = 2 / 20.0
 		# bound for accurate bezier rendering (lower = better)
 		self.flatness = 0.000002
 		# output render size (max 32767)
@@ -121,20 +118,20 @@ class RenderParameters(object):
 		# angle below which a node is considered smooth
 		self.curve_angle = 30.0
 		# dwell time at the start of a path (samples)
-		self.start_dwell = 2
+		self.start_dwell = 3
 		# dwell time on internal curved nodes (samples)
 		self.curve_dwell = 0
 		# dwell time on internal corner nodes (samples)
-		self.corner_dwell = 2
+		self.corner_dwell = 4
 		# dwell time at the end of a path (samples)
-		self.end_dwell = 3
+		self.end_dwell = 2
 		# dwell time before switching the beam on, and after switching it off
-		self.switch_on_dwell = 2
-		self.switch_off_dwell = 2
+		self.switch_on_dwell = 3
+		self.switch_off_dwell = 3
 		# how many pointer of overdraw for closed shapes
 		self.closed_overdraw = 0
-		self.closed_start_dwell = 2
-		self.closed_end_dwell = 2
+		self.closed_start_dwell = 4
+		self.closed_end_dwell = 5
 		# extra dwell for the first active pointer
 		self.extra_first_dwell = 0
 		# invert image (show inter-object trips)
@@ -427,6 +424,34 @@ class LaserFrame(object):
 		params.points = len(out)
 		params.points_on = sum([int(s.on) for s in out])
 		return out
+
+
+	def custom_sort(self):
+		oobj = []
+		cx, cy = 0, 0
+		while self.objects:
+			best = 99999
+			besti = 0
+			bestr = False
+			for i, o in enumerate(self.objects):
+				x, y = o.startpos()
+				d = (x - cx) ** 2 + (y - cy) ** 2
+				if d < best:
+					best = d
+					besti = i
+				x, y = o.endpos()
+				d = (x - cx) ** 2 + (y - cy) ** 2
+				if d < best:
+					best = d
+					besti = i
+					bestr = True
+			obj = self.objects.pop(besti)
+			if bestr:
+				obj = obj.reverse()
+			oobj.append(obj)
+			cx, cy = obj.endpos()
+		self.objects = oobj
+
 	def sort(self):
 		oobj = []
 		cx,cy = 0,0
@@ -624,7 +649,7 @@ class SVGPath(object):
 				cur = curcpc = curcpq = sp_start
 				in_path = True
 			elif ucmd == 'Z':
-				print(sp_start, cur)
+				#print(sp_start, cur)
 				if (sp_start[0] - cur[0]) > 0.0000001 or (sp_start[1] - cur[1]) > 0.0000001:
 					subpath.add(PathLine(cur, sp_start,True,self.color),self.color)
 				cur = curcpc = curcpq = sp_start
@@ -971,8 +996,8 @@ class SVGReader(xml.sax.handler.ContentHandler):
 			for i in q:
 				m = m + str(i + " ")
 			m = m + str(q[0] + " ")
-		data=m
-		print(m)
+			data=m
+			#print(m)
 		p = SVGPolyline(data, close,color)
 		for path in p.subpaths:
 			path.transform(self.ts)

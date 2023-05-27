@@ -1,7 +1,7 @@
 // CONSTANTS FOR ALL DEVICES //
 #define LED_PACKET_BUFFER 320
 unsigned int localPort = 8888;
-byte gateway[] = { 192, 168, 2, 254} ;
+byte gateway[] = { 10, 20, 30, 1} ;
 byte subnet[] = { 255, 255, 255, 0} ;
 
 
@@ -9,7 +9,7 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #if defined(SEINPAAL_1)
   #define USING_WIZNET 1;
 	byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x07};
-	byte ip[] = { 192, 168, 2, 150 };
+	byte ip[] = { 10, 20, 30, 2};
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
@@ -17,23 +17,16 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #if defined(SEINPAAL_2)
   #define USING_WIZNET 1;
 	byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x08};
-	byte ip[] = { 192, 168, 2, 151 };
+	byte ip[] = {  10, 20, 30, 3};
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
 
-#if defined(ESP_SEINPAAL_2)
-  #define USING_WIZNET 1;
-  byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x08};
-  byte ip[] = { 192, 168, 2, 151 };
-  #define DATA_PIN 5 //On ESP we use D1 (GPIO5) as output.
-  #define NUM_LEDS 300 //Seinpaal has 300 LEDs
-#endif
 
 #if defined(SEINPAAL_3)
   #define USING_WIZNET 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x09};
-  byte ip[] = { 192, 168, 2, 152 };
+  byte ip[] = {  10, 20, 30, 4 };
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
@@ -41,14 +34,15 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #if defined(SEINPAAL_4)
   #define USING_WIZNET 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0A};
-  byte ip[] = { 192, 168, 2, 153 };
+  byte ip[] = {  10, 20, 30, 5 };
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
 
 #if defined(SEINPAAL_5)
+  #define USING_WIZNET 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0B};
-  byte ip[] = { 192, 168, 2, 154 };
+  byte ip[] = {  10, 20, 30, 6 };
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
@@ -56,7 +50,7 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #if defined(SEINPAAL_6)
   #define USING_WIZNET 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0C};
-  byte ip[] = { 192, 168, 2, 155 };
+  byte ip[] = {  10, 20, 30, 7 };
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
@@ -64,7 +58,7 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #if defined(SEINPAAL_7)
   #define USING_WIZNET 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0D};
-  byte ip[] = { 192, 168, 2, 156 };
+  byte ip[] = {  10, 20, 30, 8 };
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
@@ -72,48 +66,48 @@ byte subnet[] = { 255, 255, 255, 0} ;
 #if defined(SEINPAAL_8)
   #define USING_WIZNET 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0E};
-  byte ip[] = { 192, 168, 2, 157 };
+  byte ip[] = {  10, 20, 30, 9};
   #define DATA_PIN 3 //On Arduino we use D3 as data out
   #define NUM_LEDS 300 //Seinpaal has 300 LEDs
 #endif
 
 
-#if defined(LEDBEAM_1)
+#if defined(LEDBEAM_1) //AKA LB 1+2
   #define USING_ESP8266 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x0F};
-  byte ip[] = { 192, 168, 2, 157 };
+  byte ip[] = {  10, 20, 30, 10 };
   #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
-  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+  #define NUM_LEDS 212 //Ledbeam has 106 LEDs, so 212 for two ledbeams
 #endif
 
-#if defined(LEDBEAM_2)
+#if defined(LEDBEAM_2) //AKA LB 3+4
   #define USING_ESP8266 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x10};
-  byte ip[] = { 192, 168, 2, 157 };
+  byte ip[] = {  10, 20, 30, 11 };
   #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
-  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+  #define NUM_LEDS 212 //Ledbeam has 106 LEDs, so 212 for two ledbeams
 #endif
 
-#if defined(LEDBEAM_3)
+#if defined(LEDBEAM_3) //AKA LB 5+6
   #define USING_ESP8266 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x11};
-  byte ip[] = { 192, 168, 2, 157 };
+  byte ip[] = {  10, 20, 30, 12 };
   #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
-  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+  #define NUM_LEDS 212 //Ledbeam has 106 LEDs, so 212 for two ledbeams
 #endif
 
-#if defined(LEDBEAM_4)
+#if defined(LEDBEAM_4) //AKA LB 7+8
   #define USING_ESP8266 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x12};
-  byte ip[] = { 192, 168, 2, 157 };
+  byte ip[] = {  10, 20, 30, 13 };
   #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
-  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+  #define NUM_LEDS 212 //Ledbeam has 106 LEDs, so 212 for two ledbeams
 #endif
 
-#if defined(LEDBEAM_5)
+#if defined(LEDBEAM_5) //AKA LB 9+10
   #define USING_ESP8266 1;
   byte mac[] = {0xBE, 0xEF, 0x13, 0x37, 0xBE, 0x13};
-  byte ip[] = { 192, 168, 2, 157 };
+  byte ip[] = {10, 20, 30, 14};
   #define DATA_PIN 0 //On ESP we use D3 as data out (GPIO0)
-  #define NUM_LEDS 106 //Ledbeam has 106 LEDs
+  #define NUM_LEDS 212 //Ledbeam has 106 LEDs, so 212 for two ledbeams
 #endif
