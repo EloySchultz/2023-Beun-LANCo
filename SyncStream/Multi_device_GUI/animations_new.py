@@ -20,6 +20,7 @@ class c_animations():
             ' ': [[0, 0, 0, 0, 0]],
             'W': [[1, 1, 1, 1, 0], [0, 0, 0, 0, 1], [0, 0, 0, 1, 1], [0, 0, 0, 0, 1], [1, 1, 1, 1, 0]],
             'C': [[0, 1, 1, 1, 0], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1]],
+            'G': [[0, 1, 1, 1, 0], [1, 0, 1, 0, 1], [1, 0, 0, 1, 0]],
             'O': [[1, 1, 1, 1, 1], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1]],
             'M': [[0, 1, 1, 1, 1], [1, 0, 0, 0, 0], [0, 1, 1, 0, 0], [1, 0, 0, 0, 0], [1, 1, 1, 1, 0]],
             'H': [[1, 1, 1, 1, 1], [0, 0, 1, 0, 0], [1, 1, 1, 1, 1]],
@@ -31,7 +32,8 @@ class c_animations():
             'R': [[1, 1, 1, 1, 1], [1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [0, 0, 0, 0, 1]],
             'B': [[1, 1, 1, 1, 1], [1, 0, 1, 0, 1], [0, 1, 0, 1, 0]],
             'V': [[1, 1, 1, 1, 0], [0, 0, 0, 0, 1], [1, 1, 1, 1, 0]],
-            'U': [[1, 1, 1, 1, 1], [0, 0, 0, 0, 1], [1, 1, 1, 1, 1]]}
+            'U': [[1, 1, 1, 1, 1], [0, 0, 0, 0, 1], [1, 1, 1, 1, 1]],
+            'P': [[1, 1, 1, 1, 1], [1, 0, 1, 0, 1], [0, 1, 0, 0, 0]]}
 
         pass
         
@@ -149,8 +151,9 @@ class c_animations():
     def moving_stripes(self,beunding, N, speed=1, dt=0.06, duration=30, colour=(15,0,15)):
 
         portal = 1;
-        portal1_N=50
-        portal2_N=60
+        portal_widht = 5
+        portal1_N=4*106-portal_widht-1
+        portal2_N=4*106+1
         if colour == (0,0,0):
             rgb=1;
         else:
@@ -171,7 +174,7 @@ class c_animations():
             if portal == 1:
                 for i in range(portal1_N,portal2_N):
                     buffer[i] = (0,0,0)
-                for i in range(3):
+                for i in range(portal_widht):
                     buffer[i+portal1_N] = (15,3,0)
 
                     buffer[i + portal2_N] = (0, 3, 15)
@@ -359,8 +362,8 @@ class c_animations():
         #     #val =
         #     #val = [int(abs(c)) for c in val]
         #     period.append(val)
-        centroids=[20,50]
-        speeds=[1,-0.52]
+        centroids=[20,50,20,20,20,20]
+        speeds=[1,-0.52,1.4,-0.4,0.74,-1]
         magnitude=0
         m2 = 0
         buffer=[]
@@ -390,8 +393,8 @@ class c_animations():
                 x=round(x)
                 buffer2 = self.try_set_written(buffer2, N, x, tuple(magnitude * x for x in (15, 15, 15)))
                 for i in range(5):
-                    buffer2 = self.try_set_written(buffer2, N, i + x, tuple(magnitude*0.6 ** i * x for x in (10, 10, 10)))
-                    buffer2 = self.try_set_written(buffer2, N, x - i, tuple(magnitude*0.6 ** i * x for x in (10, 10, 10)))
+                    buffer2 = self.try_set_written(buffer2, N, i + x, tuple(magnitude*0.8 ** i * x for x in (10, 10, 10)))
+                    buffer2 = self.try_set_written(buffer2, N, x - i, tuple(magnitude*0.8 ** i * x for x in (10, 10, 10)))
             for i in range(N):
                 buffer[i] = tuple(max(x) for x in zip(buffer[i],buffer2[i]))
             self.send_buffer(beunding,buffer)
@@ -406,8 +409,13 @@ class c_animations():
 
     def blank(self,beunding, N, speed=1, dt=0.02, duration=30, colour=(0,0,0)):
         self.set_colour(beunding, N, colour=(0,0,0))
-            
-            
+
+    def show_2(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour2 = (2,0,0), colour=(3,1,0)):
+        self.show_text(beunding, N,string="WELCOME TO THE TESLAN!", dt = 0.1, duration = 30, colour=colour)
+        self.sinus(beunding, N, speed, dt = 0.02, duration = 30, colour=colour)
+        self.show_text(beunding, N, string="GLHF!", dt=0.1, duration=30, colour=colour)
+        self.knightrider_fill(beunding, N, speed=1, dt=0.1, duration=30, colour=(0,2,2))
+
     def red_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour2 = (2,0,0), colour=(3,1,0)):
         #Dit kan efficienter, bla bla bla
         Nsteps = int(duration//dt)
@@ -461,22 +469,35 @@ class c_animations():
             beunding.send()
             sleep(dt)
             
-            
+    def red_red_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour2 = (2, 0, 0), colour = (3, 1, 0)):
+        colour = (2, 0, 0)
+        colour2 = (3, 1, 0)
+        self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
     #
-    # def blue_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (0,0,1), colour2=(1,2,2)):
-    #     self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
-    #
-    # def green_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (0,1,0), colour2=(2,2,0)):
-    #     self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
-    #
-    # def pink_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (1,0,1), colour2=(3,1,1)):
-    #     self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
-    #
-    # def yellow_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (2,1,0), colour2=(3,2,0)):
-    #     self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
-    #
-    # def white_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (1,1,1), colour2=(2,2,1)):
-    #     self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
+    def blue_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (0,0,1), colour2=(1,2,2)):
+        colour = (0, 0, 1)
+        colour2 = (1, 2, 2)
+        self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
+
+    def green_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (0,1,0), colour2=(2,2,0)):
+        colour = (0, 1, 0)
+        colour2 = (2, 2, 0)
+        self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
+
+    def pink_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (1,0,1), colour2=(3,1,1)):
+        colour = (1, 0, 1)
+        colour2 = (3, 1, 1)
+        self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
+
+    def yellow_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (2,1,0), colour2=(3,2,0)):
+        colour = (2, 1, 0)
+        colour2 = (5, 3, 0)
+        self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
+
+    def white_flame(self,beunding, N, speed=1, dt = 0.02, duration = 30, colour = (1,1,1), colour2=(2,2,1)):
+        colour = (1, 1, 1)
+        colour2 = (2, 2, 1)
+        self.red_flame(beunding, N, speed, dt, duration, colour, colour2)
 
         
     def vertical_rainbow(self,beunding, N, speed=1, dt = 0.02, duration = 30, brightness=0.6, colour=(0,0,0)):
@@ -491,11 +512,11 @@ class c_animations():
             sleep(dt)
             
 
-    def show_text(self,beunding, N, string="BEUN!", dt = 0.1, duration = 30, colour = (1,1,1)):
+    def show_text(self,beunding, N, string="SLEEP IS FOR THE WEAK!", dt = 0.1, duration = 30, colour = (1,1,1)):
         #duration = how many times to repeat
         repeated=0
         font=self.font
-        Nsteps = 1000000#int(duration//dt)
+        Nsteps = int(duration//dt)
         offset=0
         colors=[(0,0,0),colour]
         min_index=10000000
