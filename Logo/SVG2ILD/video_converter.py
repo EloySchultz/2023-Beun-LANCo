@@ -35,7 +35,7 @@ def main(argv):
     number_of_frames = len(onlyfiles)
     current_frame = 0;
     samples=[]
-    print("Saving in:" + str(argv[2]))
+    print("Opening :" + str(argv[2]))
     fout = open(argv[2], "wb")
     for path in onlyfiles:
         print("Processing" + str(path))
@@ -75,6 +75,7 @@ def main(argv):
         fout.write(frames[current_frame])
         current_frame+=1;
     hdr = struct.pack(">4s3xB8s8sHHHBx", b"ILDA", 0, b"svg2ilda", b"", 0, 0, number_of_frames, 0)
+    print("Closing:" + str(argv[2]))
     fout.write(hdr)
     fout.close()
 
