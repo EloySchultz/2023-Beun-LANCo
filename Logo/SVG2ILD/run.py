@@ -9,15 +9,15 @@ import os
 from os import listdir
 from os.path import isfile, join
 #
-# mypath = os.path.join(os.getcwd(), "content","SVG_static")
-# onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-#
-#
-# for file in onlyfiles:
-#     name=file
-#     image_converter.main(["", os.path.join(os.getcwd(), "content", "SVG_static", name),
-#                           os.path.join(os.getcwd(), "ILDA", name + ".ild")])
-#
+mypath = os.path.join(os.getcwd(), "content","SVG_static")
+onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+
+
+for file in onlyfiles:
+    name=file
+    image_converter.main(["", os.path.join(os.getcwd(), "content", "SVG_static", name),
+                          os.path.join(os.getcwd(), "ILDA", name + ".ild")])
+
 #
 
 
