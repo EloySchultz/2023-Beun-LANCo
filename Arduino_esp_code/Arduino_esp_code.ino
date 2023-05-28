@@ -3,7 +3,7 @@
 #include <FastLED.h>
 
 // CONFIG //
-#define SEINPAAL_4 1;  //Put here which seinpaal you are uploading to.
+#define LEDBEAM_4 1;  //Put here which seinpaal you are uploading to.
 #include "devices.h"
 
 //END OF CONFIG//
