@@ -21,6 +21,8 @@ The Seinpalen are controlled by either an Arduino Nano (Seinpaal 1-4) or Arduino
 
 For powersupply, a 5V >7A powersupply should be used. I recommend to use the high current ATX powersupplies for the seinpalen as they have long wires (i.e. current losses) and many LEDs. Strictly, the LEDstrip can pull up to 18A! However in reality, I found that the maximum current is lower due to the losses in the wires. High current causes high voltage drop across the wires, which in turn lowers the voltage that the LEDs receive. At some point, the voltage drop is so high that the LEDs no longer pass through data.
 
+https://youtu.be/9BhRjhOlgGc
+
 The code for the seinpaal controllers is placed in the folder Arduino_esp_code/. The config can be found in devices.h, which includes MAC/IP settings for all devices. If at least one device has USING_ESP8266 defined, then you need to supply the wifi credentials in wifi_credentials.h (see wifi_credentials_example.h). 
 
 When booting a microcontroller with this code, there is a simple LED debug indicator visible (1st 14 LEDS, on seinpalen this looks like a ring). 
@@ -48,6 +50,7 @@ The crew-area is usually a U-shaped group of tables that is separated from the r
 For TesLAN 6, we used the following wiring. Please note that I do not recommend to use this wiring for future editions. 
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/4ca987e2-1cc2-42c6-80d7-1bf7fa666d44)
 The idea is that the powersupply is in the center of two beams, thus creating minimal in-strip resistive losses. For controllers, we simply use ESP8266 nodeMCU V3 boards with a JST-SM male connector attached to it. This controller hangs on the input side of the beams, and will receive power through the rails of the led strip. 
+
 https://youtu.be/yT-bN0SuYpE
 
 On the ESP8266, the same code in the folder Arduino_esp_code/ is used. Make sure to switch to the correct device in the Arduino IDE before uploading.
@@ -64,7 +67,9 @@ So still 2 ledbeams per PSU and PSU in the middle, but instead we use LAN-based 
 In previous years, there was a large TesLAN logo on the wall behind the crew-area. This was first achieved by building the logo out of cardboard, and from the 4th edition a large PVC logo was built that was lit up using EL-Wire. However, this logo was a pain to set up and the EL-wire PSU broke at the 5th edition of the TesLAN. Hence, a new solution was needed.
 
 For TesLAN 6, we rented a laser projector and FB3 interface from T-organisations. The laser can project shapes by quickly rotating mirrors (scanners), such that the laser point moves quickly and to our pesky human eyes it looks like solid lines. The physical setup looks like this:
+
 https://youtube.com/shorts/J3oQPthkkY8
+
 There is a small PC in the truss that has quickshow on it and that is connected with an FB3 interface to the laser through ILDA. The computer is remote controlled using nomachine. 
 
 In order to create animations/graphics for the laser, we have set up the following pipeline: 
@@ -91,4 +96,12 @@ Want a tutorial? Here is me sleepdrunk at 3AM on the 2nd night of TesLAN 6 tryin
 
 BTW, the code for TesLAN Beun Manager is pretty horrible cuz I beuned it together in a rush and I don't care about unclear and vague variable assignments lol. If you do the wrong thing, you can make it crash. Someone should probably have a good look at it and make it nice and proper. 
 
+
+
+# 5. Beamer stuff
+So the beamer needs to hang of the Truss, and we never had a proper solution for this. For TesLAN 6, I revived the old beamer platform that was built previously. The design consists of two wooden rectangles with a platform in the middle for the beamer to sit on. I improved the design by completing the loops (adding a beam underneath the platform) and by slightly reinforcing the corners. Howerver, in the future, some cross beams should be added so that we can stop the beamer assembly from wiggling around as much. 
+
+
+#6 Switch stuff
+The switches hang between the tables on two wooden beams. These are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough.
 
