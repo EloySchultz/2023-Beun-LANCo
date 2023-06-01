@@ -2,16 +2,13 @@
 The best LAN party in the world would not be complete without some fire hazards. In the past 5 editions of the TesLAN, the tinkering masters of the LANCo have crafted and accumulated things that light up and add to the ambience of the LAN, expertly referred to as "beundingen" (beunthings). 
 
 For TesLAN 6, beun consisted of the following items:
-Exciting stuff:
 
 1. Signposts (seinpalen)
 2. LEDbeams Crew-area
 3. Logo Crew-area 
 4. SyncStream (software)
-
-Less exciting, but still important stuff:
 5. Beamer assembly
-6. Switch assembly
+6. Switch beams
 
 # 1. Signposts
 The seinpalen are large PVC pipes with an addressable LED-string at the top. Typically there is one seinpaal for each group of tables at the LAN. These Seinpalen can be used to assign each group of tables to a color. They can also be used to highlight a group of tables, for example to tell that group of people that they can go and get food. 
