@@ -1,4 +1,7 @@
 # 2023-Beun-Lanco
+
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/4e1e5fa1-0133-4f9e-8dd2-f09942c62a99)
+
 The best LAN party in the world would not be complete without some fire hazards. In the past 5 editions of the TesLAN, the tinkering masters of the LANCo have crafted and accumulated things that light up and add to the ambience of the LAN, expertly referred to as "beundingen" (beunthings). 
 
 For TesLAN 6, beun consisted of the following items:
@@ -11,6 +14,8 @@ For TesLAN 6, beun consisted of the following items:
 6. Switch beams
 
 # 1. Signposts
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/53bb3fde-d291-4a63-9da1-c227e7efac15)
+
 The seinpalen are large PVC pipes with an addressable LED-string at the top. Typically there is one seinpaal for each group of tables at the LAN. These Seinpalen can be used to assign each group of tables to a color. They can also be used to highlight a group of tables, for example to tell that group of people that they can go and get food. 
 
 The seinpalen are constructed of two pieces of 70 mm PVC pipe, coupled by a 70-70mm PVC extender (coupler piece). The top piece is about 40 cm in length, while the bottom piece is 2 meters long. (The bottom 2 meter long part is not always 70 mm, will report on this once on the LAN). Around the top pipe, 5 meters of 60 leds/m WS2812b leds are wrapped (300 leds total). The input of the LED strip is at the top, so index 0 is LED closes to the ceiling and index 299 is the LED that is closes to the ground. Each LEDstrip has a JST-SM 3 pin female connector which powers the LEDstrip from the top. There is also a speaker wire attached at the bottom of the LEDstrip which powers the LEDstrip from the bottom. It is needed to have 2 power injection points, as the voltage drops quickly on the conductors in the LED-strips, because of their relatively high resistance. Please wire the seinpaal as follows:
@@ -45,6 +50,8 @@ We have 6 ATX PSU's that have been wired to just output 5V. On these PSUs, the g
 
 
 # 2. LEDbeams Crew-area
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/9b6a3c87-4586-4185-a5b0-46bf1939bf2a)
+
 The crew-area is usually a U-shaped group of tables that is separated from the rest of the LAN. This area hosts the most valuable people at the LAN, soooo we gotta accentuate that with some LEDs of course! To achieve this, the LANCo owns 10 beams of ~1.8 meters that have 60 leds/m WS2812b LED strips attached. There are 106 LEDs per beam (although this is slightly different for some damaged LED beams). We highly recommend to NOT chain more than 2 LEDbeams per PSU due to current losses in the LEDstrips.  
 ## How we did it at TesLAN 6
 For TesLAN 6, we used the following wiring. Please note that I do not recommend to use this wiring for future editions. 
@@ -63,6 +70,7 @@ For future editions, I recommend a setup like this:
 So still 2 ledbeams per PSU and PSU in the middle, but instead we use LAN-based controllers, and we only connect the grounds and data wires together. 
 
 # 3. Logo
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/356c56bc-a6a1-4140-884d-d32d3ec43b53)
 
 In previous years, there was a large TesLAN logo on the wall behind the crew-area. This was first achieved by building the logo out of cardboard, and from the 4th edition a large PVC logo was built that was lit up using EL-Wire. However, this logo was a pain to set up and the EL-wire PSU broke at the 5th edition of the TesLAN. Hence, a new solution was needed.
 
@@ -102,9 +110,11 @@ BTW, the code for TesLAN Beun Manager is pretty horrible cuz I beuned it togethe
 
 
 # 5. Beamer stuff
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/76ddfb7c-26c7-416a-9104-b10df8178eb8)
+
 So the beamer needs to hang of the Truss, and we never had a proper solution for this. For TesLAN 6, I revived the old beamer platform that was built previously. The design consists of two wooden rectangles with a platform in the middle for the beamer to sit on. I improved the design by completing the loops (adding a beam underneath the platform) and by slightly reinforcing the corners. Howerver, in the future, some cross beams should be added so that we can stop the beamer assembly from wiggling around as much. 
 
 
-#6 Switch stuff
+# 6 Switch stuff
 The switches hang between the tables on two wooden beams. These are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough.
 
