@@ -59,7 +59,7 @@ The above setup had some problems. The JST connectors are very prone to break du
 
 Another problem occurred with the Wi-Fi. During the LAN, it is apparently very busy on the 2.4GHz band; Many people are using either Wi-Fi, Bluetooth or both. So much so, that putting beun devices that need a constant, uninterrupted stream of packets on Wi-Fi turned out to be a really bad idea. Devices were barely receiving any packets during busy times, sometimes reaching up to >3 seconds per update. Many packets were dropped or delayed, so much so that it was at times not possible to have the led beams act in sync, nor to blank the led beams.  
 For future editions, I recommend a setup like this:
- ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/d9db271c-b552-40fa-a4cb-904a681ee872)
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/ddb42aaf-e751-4464-bd36-5344b5948b58)
 So still 2 ledbeams per PSU and PSU in the middle, but instead we use LAN-based controllers, and we only connect the grounds and data wires together. 
 
 # 3. Logo
