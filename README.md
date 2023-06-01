@@ -92,7 +92,10 @@ During the LAN, you can tune the settings in Logo/SVG2ILD/core.py so that the IL
 # 4. SyncStream
 SyncStream is a protocol for streaming rgb data directly to microcontrollers with LEDs in real-time over (W)LAN. The idea is simple: LEDs on a device retain their state unless the microcontroller receives an update for that LED. An update consists of a UDP packet that consists of groups of 3 bytes. The first 12 bits encode the LED index (0-4095), after which 3 sections of 4 bits each encode the value for red, green and blue respectively (0,15).   
 SyncStream has two parts: one program that runs on the beun devices (that you can find in /Arduino_esp_code) and the other that runs on a computer that acts as a server (find this in /SyncStream). Mathijs and Max did a great job writing SyncStream in the past, which is why for this year I felt like it was a great idea to mostly ignore their work and instead beun together a GUI that can act as a server (TesLAN Beun Manager). TBM allows for allows for easy managing of all beun devices in the hall. You run it by running /SyncStream/Multi_device_GUI/main.py. Essentially, TBM spawns a process for each beun device and provides an overview and controls over all child processes. Aside from this, TBM allows for beun devices to be grouped, or nested in virtual devices such that a group of devices acts as one large device. Groups can also be activated in a wave-like pattern, such that it looks like a wave is going through the hall, which is achieved by spawning processes with a delay based on the location of the devices in the hall.
-Want a tutorial? Here is me sleepdrunk at 3AM on the 2nd night of TesLAN 6 trying to explain it:
+
+Want a tutorial? Here is sleep-deprived me at 1 AM on the 2nd night of TesLAN 6 trying to explain it:
+
+https://www.youtube.com/watch?v=qlxQvPsAu7o
 
 BTW, the code for TesLAN Beun Manager is pretty horrible cuz I beuned it together in a rush and I don't care about unclear and vague variable assignments lol. If you do the wrong thing, you can make it crash. Someone should probably have a good look at it and make it nice and proper. 
 
