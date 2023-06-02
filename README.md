@@ -100,6 +100,8 @@ During the LAN, you can tune the settings in Logo/SVG2ILD/core.py so that the IL
 
 
 # 4. SyncStream
+![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/46f08c7a-a550-4cea-8a8a-0216f8bc6819)
+
 SyncStream is a protocol for streaming rgb data directly to microcontrollers with LEDs in real-time over (W)LAN. The idea is simple: LEDs on a device retain their state unless the microcontroller receives an update for that LED. An update consists of a UDP packet that consists of groups of 3 bytes. The first 12 bits encode the LED index (0-4095), after which 3 sections of 4 bits each encode the value for red, green and blue respectively (0,15).   
 SyncStream has two parts: one program that runs on the beun devices (that you can find in /Arduino_esp_code) and the other that runs on a computer that acts as a server (find this in /SyncStream). Mathijs and Max did a great job writing SyncStream in the past, which is why for this year I felt like it was a great idea to mostly ignore their work and instead beun together a GUI that can act as a server (TesLAN Beun Manager). TBM allows for allows for easy managing of all beun devices in the hall. You run it by running /SyncStream/Multi_device_GUI/main.py. Essentially, TBM spawns a process for each beun device and provides an overview and controls over all child processes. Aside from this, TBM allows for beun devices to be grouped, or nested in virtual devices such that a group of devices acts as one large device. Groups can also be activated in a wave-like pattern, such that it looks like a wave is going through the hall, which is achieved by spawning processes with a delay based on the location of the devices in the hall.
 
@@ -118,5 +120,29 @@ So the beamer needs to hang of the Truss, and we never had a proper solution for
 
 
 # 6 Switch stuff
-The switches hang between the tables on two wooden beams. These are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough.
+The switches hang between the tables on two wooden beams. These beams are in a bag that is separated from the crew-area beams. They are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough.
+
+
+
+
+
+
+
+
+
+# Doing Beun on the TesLAN
+Are you doing beun on the TesLAN? Here are some tips and tricks! 
+
+1. Go to storage often to index what you have and what you need to buy. Please remember that things regularly break and despawn in storage. Hence, you should take the beun to a place where you can test it before the LAN. 
+2. Bring the following tools to the LAN:
+- Soldering iron, tin, pliers, tweezers, desoldering wick
+- Stripping pliers
+- Lab PSU with over current protection - Please test all appliances before connecting them to a regular PSU. 
+- Drill/screw machine with appropriate bits
+Having these tools is pretty much a requirement if you want to make stuff work.
+2. Put the following items on the beun budget if we do not have them in storage:
+- CR2032 batteries (for CMOsses) 
+- Screws (3.5x30mm and 3.5x40mm)
+3. Communicate beforehand with the network wizards what your MAC adresses are and what IP adresses they will have on the LAN. This simplifies your life. They should put all beundevices on a separate VLAN, such that not everyone at the LAN can access the beun devices. 
+
 
