@@ -1,4 +1,4 @@
-# 2023-Beun-Lanco
+# 2023-Beun-LANCo | TesLAN 6th Edition 
 
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/4e1e5fa1-0133-4f9e-8dd2-f09942c62a99)
 
@@ -18,7 +18,7 @@ For TesLAN 6, beun consisted of the following items:
 
 The seinpalen are large PVC pipes with an addressable LED-string at the top. Typically there is one seinpaal for each group of tables at the LAN. These Seinpalen can be used to assign each group of tables to a color. They can also be used to highlight a group of tables, for example to tell that group of people that they can go and get food. 
 
-The seinpalen are constructed of two pieces of 70 mm PVC pipe, coupled by a 70-70mm PVC extender (coupler piece). The top piece is about 40 cm in length, while the bottom piece is 2 meters long. (The bottom 2 meter long part is not always 70 mm, will report on this once on the LAN). Around the top pipe, 5 meters of 60 leds/m WS2812b leds are wrapped (300 leds total). The input of the LED strip is at the top, so index 0 is LED closes to the ceiling and index 299 is the LED that is closes to the ground. Each LEDstrip has a JST-SM 3 pin female connector which powers the LEDstrip from the top. There is also a speaker wire attached at the bottom of the LEDstrip which powers the LEDstrip from the bottom. It is needed to have 2 power injection points, as the voltage drops quickly on the conductors in the LED-strips, because of their relatively high resistance. Please wire the seinpaal as follows:
+Most of the seinpalen are constructed of two pieces of 70 mm PVC pipe, coupled by a 70-70mm PVC extender (coupler piece). However, with some seinpalen the bottom piece is more than 70 mm in diameter, hence some tape is needed to attach the 70mm head to the >70mm bottom piece. The top piece is about 40 cm in length, while the bottom piece is 2 meters long. Around the top pipe, 5 meters of 60 leds/m WS2812b leds are wrapped (300 leds total). The input of the LED strip is at the top, so index 0 is LED closes to the ceiling and index 299 is the LED that is closes to the ground. Each LEDstrip has a JST-SM 3 pin female connector which powers the LEDstrip from the top. There is also a speaker wire attached at the bottom of the LEDstrip which powers the LEDstrip from the bottom. It is needed to have 2 power injection points, as the voltage drops quickly on the conductors in the LED-strips, because of their relatively high resistance. Please wire the seinpaal as follows:
 
 ![image](https://user-images.githubusercontent.com/99472685/225277334-c6208dba-fee9-407c-9db2-920bfa4313dd.png)
 
@@ -52,13 +52,15 @@ We have 6 ATX PSU's that have been wired to just output 5V. On these PSUs, the g
 # 2. LEDbeams Crew-area
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/9b6a3c87-4586-4185-a5b0-46bf1939bf2a)
 
-The crew-area is usually a U-shaped group of tables that is separated from the rest of the LAN. This area hosts the most valuable people at the LAN, soooo we gotta accentuate that with some LEDs of course! To achieve this, the LANCo owns 10 beams of ~1.8 meters that have 60 leds/m WS2812b LED strips attached. There are 106 LEDs per beam (although this is slightly different for some damaged LED beams). We highly recommend to NOT chain more than 2 LEDbeams per PSU due to current losses in the LEDstrips.  
+The crew-area is usually a U- or L-shaped group of tables that is separated from the rest of the LAN. This area hosts the most valuable people at the LAN, soooo we gotta accentuate that with some LEDs of course! To achieve this, the LANCo owns 10 beams of ~1.8 meters that have 60 leds/m WS2812b LED strips attached. There are 106 LEDs per beam (although this is slightly different for some damaged LED beams). The beams are placed at the front-side of the tables, and 10 diffuser panels are placed in front of it. The diffuser panels consists of a plastic frame and fabric that is squished into the frames with rubbers (much like a hor, the fabric is squished in with this stuff (https://www.praxis.nl/badkamer-keuken-wonen/horren/accessoires/bruynzeel-pees-en-rollerset/5609465)). The diffuser panels are attached to the ledbeams with small wooden beams and some screws. 
+
+I highly recommend to NOT chain more than 2 LEDbeams per PSU due to current losses in the LEDstrips.  
 ## How we did it at TesLAN 6
+
+https://youtu.be/yT-bN0SuYpE
 For TesLAN 6, we used the following wiring. Please note that I do not recommend to use this wiring for future editions. 
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/4ca987e2-1cc2-42c6-80d7-1bf7fa666d44)
 The idea is that the powersupply is in the center of two beams, thus creating minimal in-strip resistive losses. For controllers, we simply use ESP8266 nodeMCU V3 boards with a JST-SM male connector attached to it. This controller hangs on the input side of the beams, and will receive power through the rails of the led strip. 
-
-https://youtu.be/yT-bN0SuYpE
 
 On the ESP8266, the same code in the folder Arduino_esp_code/ is used. Make sure to switch to the correct device in the Arduino IDE before uploading.
 ## How we recommend doing it on TesLAN 7+
@@ -67,7 +69,7 @@ The above setup had some problems. The JST connectors are very prone to break du
 Another problem occurred with the Wi-Fi. During the LAN, it is apparently very busy on the 2.4GHz band; Many people are using either Wi-Fi, Bluetooth or both. So much so, that putting beun devices that need a constant, uninterrupted stream of packets on Wi-Fi turned out to be a really bad idea. Devices were barely receiving any packets during busy times, sometimes reaching up to >3 seconds per update. Many packets were dropped or delayed, so much so that it was at times not possible to have the led beams act in sync, nor to blank the led beams.  
 For future editions, I recommend a setup like this:
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/ddb42aaf-e751-4464-bd36-5344b5948b58)
-So still 2 ledbeams per PSU and PSU in the middle, but instead we use LAN-based controllers, and we only connect the grounds and data wires together. 
+So still 2 ledbeams per PSU and PSU in the middle, but instead we use LAN-based controllers, and we only connect the grounds and data wires together. Aside from this, we use only 2 instead of 5 controllers, further negating sync issues. 
 
 # 3. Logo
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/356c56bc-a6a1-4140-884d-d32d3ec43b53)
@@ -105,7 +107,7 @@ Want a tutorial? Here is sleep-deprived me at 1 AM on the 2nd night of TesLAN 6 
 
 https://www.youtube.com/watch?v=qlxQvPsAu7o
 
-BTW, the code for TesLAN Beun Manager is pretty horrible cuz I beuned it together in a rush and I don't care about unclear and vague variable assignments lol. If you do the wrong thing, you can make it crash. Someone should probably have a good look at it and make it nice and proper. 
+BTW, the code for TBM is pretty horrible cuz I beuned it together in a rush and I don't care about unclear and vague variable assignments lol. If you do the wrong thing, you can make it crash. Someone should probably have a good look at it and make it nice and proper. 
 
 
 
