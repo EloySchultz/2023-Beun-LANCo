@@ -130,19 +130,22 @@ The switches hang between the tables on two wooden beams. These beams are in a b
 
 
 
-# Doing Beun on the TesLAN
+# 7 Doing Beun on the TesLAN
 Are you doing beun on the TesLAN? Here are some tips and tricks! 
 
-1. Go to storage often to index what you have and what you need to buy. Please remember that things regularly break and despawn in storage. Hence, you should take the beun to a place where you can test it before the LAN. 
+1. Go to storage often to index what you have and what you need to buy. Please remember that things regularly break and despawn in storage. You should take beun to a place where you can test it before the LAN. 
 2. Bring the following tools to the LAN:
 - Soldering iron, tin, pliers, tweezers, desoldering wick
 - Stripping pliers
 - Lab PSU with over current protection - Please test all appliances before connecting them to a regular PSU. 
-- Drill/screw machine with appropriate bits
-Having these tools is pretty much a requirement if you want to make stuff work.
+- Drill/screw machine with appropriate bits (note that we have screws with phillips head and with torx head. 
+Having these tools is pretty much a requirement if you want to make stuff work. I also recommend bringing a small light or a headlamp. 
 2. Put the following items on the beun budget if we do not have them in storage:
-- CR2032 batteries (for CMOsses) 
+- CR2032 batteries (for CMOS) 
 - Screws (3.5x30mm and 3.5x40mm)
+- Speaker wire --> this is always handy to have, especially when bodging together the crew area panels. 
 3. Communicate beforehand with the network wizards what your MAC adresses are and what IP adresses they will have on the LAN. This simplifies your life. They should put all beundevices on a separate VLAN, such that not everyone at the LAN can access the beun devices. 
+4. Be in time with your beun budget. It can take 3 weeks or more before your budget is fully approved, so please submit your budget in-time with some margin. 
+5
 
 
