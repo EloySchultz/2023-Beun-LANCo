@@ -45,6 +45,10 @@ If a beundevice ring color is flickering between green and red, this is either b
 - something weird is going on between switch and beunding. We had this happen a bunch of times during the build-up of TesLAN 6. If the beunding is constantly requesting an IP from the switches, the beunding might manage to get an address for a very short bit, but it will lose this again shortly which causes a red-green loop. This was eventually solved by simply rebooting the microcontroller a couple of times. 
 - If your ring is purple, this is a combination of blue and red. This only happened once so far, and the problem went away after re-flashing the microcontroller. 
 
+
+## Something that needs fixing:
+For next edition, please make a strain relief or mount for the PCBs of the seinpalen. Currently the weight of the PCB and of all netword cable/power wire is just hanging on the connectors/wires that are connected to the PCB. This is not right, and if a connection breaks due to prolonged strain it will be a pain to repair (and also, it may cause shorting or other problems). So, I recommend to think of and implement something that holds the PCBs and wires in-place without straining the JST-SM connectors or their wires. 
+
 ## ATX powersupplies:
 We have 6 ATX PSU's that have been wired to just output 5V. On these PSUs, the green wire (PSU-ON) is wired to ground such that the power supplies are always on. Each power supply has at least 3 conductors going from the 5V rail to a WAGO clip. The WAGO clips are supposed to be permanently attached to the PSUs, as it can be a pain to squeeze the wires in the WAGO clips. All other wires are tucked to the inside of the power supplies and isolated per rail with isolation tape. 
 
