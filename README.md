@@ -125,3 +125,13 @@ So the beamer needs to hang of the Truss, and we never had a proper solution for
 
 # 6 Switch stuff
 The switches hang between the tables on two wooden beams. These beams are in a bag that is separated from the crew-area beams. They are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough. Perhaps in next years we want slightly thinner screws (like 3mm), because I recall one of the network guys saying that the big screws may damage the racke ears a bit. Check thius with the network guys.
+
+
+
+
+# Misc. notes for TesLAN 7+
+Some notes:
+- Check ledbeam 4. It was not working properly during the 6th TesLAN and I don't know why. I think that the data line might be shorted to ground or to VCC, but I did not manage to fix this during the TesLAN 6.
+- Remove labels from seinpalen and put them higher up the seinpaal. They are currently at the bottom of each sein, but this area will get covered with tape during assembly. 
+- Seinpaal 8 has a new pro-mini that has a reversed serial interface! This means that you need to connect the arduino to the FTDI programmer upside down!
+- If seinpaal uses mains cable for power:  blue is GND and brown is VCC. Most of them have a label on them that specifies this.
