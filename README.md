@@ -94,7 +94,7 @@ Use either Adobe Illustrator for still images, or Adobe Animate to generate anim
 ## 3.2 SVG Processing (this is very beun, find a better alternative please)
 This is where the magic happens. We have SVG image(s) that consist of vectors, but we need a sequence of points that our laser point needs to jump to. Furthermore, the laser needs to know for each move if the laser should be enabled and what color the laser should be during the movement. 
 
-I have taken an SVG2ILD script from OpenLase and I have modified it to support xlink tags, transforms, and color (both CSS style header and in-tag stroke). The script reads an SVG file, and then using SAX XML parser and alot of magic we extract a list of points, the color and whether the laser should be on/off during the movement. The color table is generated based on the first frame on an animation, and is put in a seperate ILDA section (see docs/ILDA_IDTF14_rev011.pdf for complete ILDA transfer specification that we use). Furthermore, we sort the points such that a semi-optimal path is found to connect all the points. I recommend you check the script yourself to understand what is going on!
+I have taken an SVG2ILD script from OpenLase(https://github.com/marcan/openlase) and I have modified it to support xlink tags, transforms, and color (both CSS style header and in-tag stroke). The script reads an SVG file, and then using SAX XML parser and alot of magic we extract a list of points, the color and whether the laser should be on/off during the movement. The color table is generated based on the first frame on an animation, and is put in a seperate ILDA section (see docs/ILDA_IDTF14_rev011.pdf for complete ILDA transfer specification that we use). The points are then sorted in the same way that OpenLase sorts them.. I recommend you check the script yourself to understand what is going on!
 
 To convert .svg files, go to Logo/SVG2ILD/run.py and put in the files there and then simply run it using python. There is a seperate section for single frames and for video SVG sequences. The main magic is happening in Logo/SVG2ILD/core.py. The script will output the .ild (ILDA) files in Logo\SVG2ILD\ILDA.
 
@@ -102,6 +102,7 @@ These IDLA files can then be loaded into a laser program of choice. For this yea
 
 During the LAN, you can tune the settings in Logo/SVG2ILD/core.py so that the ILDA files are optimized for the laser. The dwell settings and speed can influence how many points have to be drawn by the laser, so these settings can influence flickering in the final image.  
 
+Something to note: The sorting algorithm that is adopted from OpenLase is bad. It sucks. This algorithm should be revised. Joris and I have an algorithm laying around for this (send Joris or me (Eloy) a message if you need this), but please be aware that it will probably cost quite some time and effort to implement this into the OpenLase script. Therefore, I recommend that you search for a different way to convert images to ILDA for the future.
 
 # 4. SyncStream
 ![image](https://github.com/EloySchultz/2023-Beun-LANCo/assets/99472685/46f08c7a-a550-4cea-8a8a-0216f8bc6819)
