@@ -125,10 +125,9 @@ So the beamer needs to hang of the Truss, and we never had a proper solution for
 
 
 # 6 Switch stuff
-The switches hang between the tables on two wooden beams. These beams are in a bag that is separated from the crew-area beams. They are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough. Perhaps in next years we want slightly thinner screws (like 3mm), because I recall one of the network guys saying that the big screws may damage the racke ears a bit. Check thius with the network guys.
+The switches hang between the tables on two wooden beams. These beams are in a bag that is separated from the crew-area beams. They are approx 25 cm in length and have a hole where a 3.5 mm 30mm screw goes. One screw per rack ear is enough. Perhaps in next years we want slightly thinner screws (like 3mm), because I recall one of the network guys saying that the big screws may damage the racke ears a bit. Make sure to check this with the network guys.
 
-
-
+---
 
 # Misc. notes for TesLAN 7+
 Some notes:
@@ -136,3 +135,40 @@ Some notes:
 - Remove labels from seinpalen and put them higher up the seinpaal. They are currently at the bottom of each sein, but this area will get covered with tape during assembly. 
 - Seinpaal 8 has a new pro-mini that has a reversed serial interface! This means that you need to connect the arduino to the FTDI programmer upside down!
 - If seinpaal uses mains cable for power:  blue is GND and brown is VCC. Most of them have a label on them that specifies this.
+- In TBM, I made it so that packets are spammed, but you may not want this. SyncStream was made to only send a packet whenever an LED needs to be updated. However, for TesLAN 6 we were running our crew-area panels on WiFi (this sucked). I noticed that by spamming many more packets (i.e., send over the entire frame buffer every time), it was more likely that packets came through. However, since in the future you should absolutely refrain from using WiFi at all, you can probably revert this back to how it was before (sending only the updates). Note that for some animations such as the flames, you will still need to send over almost the entire framebuffer.
+
+---
+
+# General tips for doing beun at the TesLAN:
+Below, some general tips and tricks for doing beun at the TesLAN. 
+
+1. Go to storage often to index what you have and what you need to buy. Please remember that things regularly break and despawn in storage.
+Please test all beun long BEFORE the TesLAN. That usually entails taking stuff home, building a test setup and testing if it actually works. I know this can be quite alot, so keep track of the status of each beun device in an excelsheet (like I did in `Ouwe beun meuk voor Teslan 6.xlsx` on mjolnir, please note that this document is outdated but it may give you an idea on how to keep track of what is broken). It is quite important that you test stuff at home so that you can make an accurate budget. Don't just assume that things will be working when they come out of storage. They. Wont. 
+
+2. Consider to bring the following tools to the LAN:
+- Both torx bit screwdrivers and phillips bit screwdrivers (we have both types of screws, there is no coherence)
+- Battery powered drill 
+- Also smaller screwdrivers for things like kroonsteentjes (altough I have done my very best to replace all kroonsteentjes with WAGO clips)
+- Adjustable LAB bench powersupply with OCP (please, test things before you connect them with a regular PSU)
+- Multimeter
+- Soldering iron (bonus points if it is wireless, since especially for the crew area panels you will be running around alot), tin, desolder wick
+- Strippers (not the human kind), clippers, tweezers
+- Isolation tape, zipties, etc.
+- Small head lamp
+
+3. Put the following items on the beun budget if we do not have them in storage:
+- Screws (3.5x30mm and 3.5x40mm) --> This was unforeseen on TesLAN 6
+- CR2032 batteries --> This was unforeseen on TesLAN 6, were needed for LASER PC. 
+- Speaker wire --> this is always handy to have, especially when bodging together the crew area panels.
+
+4. Communicate beforehand with the network wizards what your MAC adresses are and what IP adresses they will have on the LAN. This simplifies your life. They should put all beundevices on a separate VLAN, such that not everyone at the LAN can access the beun devices. If you have a list of IP adresses, I recommend programming this list in devices.h.
+Also, for the seinpalen specifically, many of our cables have one and where the clip is broken. The end where the clip is not broken goes into the seinpaal, as otherwise the cable falls out. The other (broken) end goes into the switch. This means that sometimes, a seinpaal might stop working because the cable somehow wiggled it's way out of the switch. That's life! Just reseat the cable and power cycle the seinpaal. 
+5. Be in time with your beun budget. It can take 3 weeks or more before your budget is fully approved, so please submit your budget in-time with some margin. You can check Mjolnir for the format of the beun budget. 
+6. Keep track of what people buy (also unforeseen) and put this in the beun financial result. Make sure that you do this fairly!  
+
+That's it. Remember to also have fun lmao!
+
+ > Beun is beun. Beun is goei. Beun is an experiment. Beun is fun. Do beun.
+
+
+
